@@ -1,0 +1,178 @@
+Crea una landing page de una sola página (HTML + CSS + JS en un solo archivo) para 
+una barbería premium llamada [NOMBRE]. Concepto: "Tradición con alma moderna" — 
+donde la historia del oficio del barbero se funde con diseño editorial contemporáneo 
+y tecnología de e-commerce de lujo.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 IDENTIDAD VISUAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Paleta: Negro carbón #0A0A0A + Dorado envejecido #C9A84C + Crema #F5F0E8 
++ Granate profundo #6B1F2A + Beige cuero #8B6F47
+Tipografía: 
+  - Títulos: "Playfair Display" italic bold (desde Google Fonts) 
+  - Subtítulos: "Cormorant Garamond" 
+  - Cuerpo: "DM Sans" ligera
+Texturas: Ruido sutil de papel envejecido sobre fondos oscuros (CSS noise/grain)
+Cursor personalizado: círculo dorado pequeño que sigue el mouse
+Scrollbar: delgada, dorada sobre fondo negro
+Animaciones: fade-in escalonado al hacer scroll (Intersection Observer), 
+parallax suave en hero y secciones históricas
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📐 SECCIONES (en orden)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. NAV STICKY
+   Glassmorphism oscuro (backdrop-filter: blur). Logo centrado con divider 
+   dorado ornamental. Links: Nosotros | Historia | Servicios | Productos | 
+   Membresías | Videos | Reservar. Menú hamburguesa en mobile con animación 
+   de apertura vertical.
+
+2. HERO — PANTALLA COMPLETA
+   Fondo: video loop silenciado de barbería (usa un video de fondo en 
+   <video autoplay muted loop>). Overlay con gradiente negro semitransparente. 
+   Texto editorial centrado con animación de letras que aparecen una por una 
+   (letter-by-letter reveal). Eslogan como: "Donde el filo define al hombre."
+   Botón CTA con efecto de borde dorado animado que "se dibuja" al hover.
+   Scroll indicator animado (flecha dorada pulsante hacia abajo).
+
+3. HISTORIA — LÍNEA DE TIEMPO HORIZONTAL
+   Sección con fondo crema envejecido y textura de papel. Título: 
+   "Nuestra Historia" con ornamento tipográfico. Timeline horizontal 
+   con scroll snap que muestra hitos del negocio:
+   [1985 → Primer local] [1998 → Expansión] [2010 → Línea de productos] 
+   [2020 → Era digital] [2025 → Membresías premium]
+   Cada hito: ícono de línea fina + año en Playfair Display grande + texto breve.
+   En mobile: se convierte en vertical con línea dorada lateral.
+
+4. SERVICIOS — GRID TIPO E-COMMERCE DE LUJO
+   Fondo oscuro. Título "Nuestros Servicios" con separador ornamental dorado.
+   Grid de tarjetas (3 columnas desktop, 2 tablet, 1 mobile):
+   Cada tarjeta tiene:
+     - Ícono SVG de línea fina (navaja, tijeras, ceja, pestaña, etc.)
+     - Nombre del servicio en Playfair Display
+     - Descripción corta en DM Sans
+     - Duración estimada (⏱ 45 min)
+     - Precio en grande con color dorado
+     - Badge de "Más popular" o "Nuevo" en algunos
+     - Botón "Reservar ahora" con hover que rellena de dorado
+   Servicios incluidos:
+     Corte clásico $XX | Afeitado con navaja $XX | Corte + Barba $XX |
+     Diseño de barba $XX | Perfilado de cejas $XX | Tinte de cejas $XX |
+     Lifting de pestañas $XX | Tinte de pestañas $XX | Tratamiento capilar $XX
+
+5. PRODUCTOS — TIENDA E-COMMERCE INTEGRADA
+   Fondo crema/beige con textura. Título editorial "La Colección".
+   Filtros horizontales tipo pill/chip: [Todos] [Cabello] [Barba] [Piel] [Sets]
+   Grid de tarjetas de producto (4 columnas desktop):
+   Cada tarjeta:
+     - Imagen placeholder con gradiente elegante (simula foto de producto)
+     - Nombre del producto
+     - Descripción de 1 línea
+     - Precio original tachado + Precio con descuento (si aplica)
+     - Estrellas de calificación (★★★★☆)
+     - Botón "Agregar al carrito" + ícono de corazón (favorito)
+     - Badge "Exclusivo miembros" en productos premium
+   Mini carrito flotante en esquina inferior derecha con contador de items.
+
+6. MEMBRESÍAS — TARJETAS DE DESCUENTO PERSONALIZADAS
+   Fondo muy oscuro con partículas doradas animadas (canvas JS).
+   Título: "Clubes de Membresía — Tu nivel, tus privilegios"
+   3 tarjetas de membresía estilo tarjeta de crédito de lujo (con efecto 3D 
+   tilt al hover usando perspectiva CSS):
+
+   🥉 PLAN CLÁSICO — Color: Cuero #8B6F47
+      - Diseño de tarjeta con textura de cuero
+      - Nombre del miembro grabado (placeholder)
+      - 10% descuento en servicios
+      - Acceso a productos básicos de la tienda
+      - Reserva prioritaria (48h antes)
+      - $XX.XXX / mes
+
+   🥈 PLAN ÉLITE — Color: Plata #C0C0C0 con brillo metálico
+      - Diseño con efecto metálico plateado
+      - 20% descuento en servicios
+      - 15% descuento en productos
+      - Reserva prioritaria (72h antes)
+      - 1 servicio gratis al mes (corte)
+      - Acceso anticipado a nuevos productos
+      - $XX.XXX / mes
+
+   🥇 PLAN MAESTRO — Color: Dorado #C9A84C con efecto holográfico
+      - Diseño con gradiente dorado y shimmer animado
+      - 30% descuento en TODOS los servicios
+      - 25% descuento en productos
+      - Reserva prioritaria (7 días antes)
+      - 2 servicios gratis al mes
+      - Caja mensual de productos sorpresa
+      - Acceso VIP a eventos exclusivos
+      - Línea directa WhatsApp con el barbero
+      - $XX.XXX / mes
+
+   Botón "Activar membresía" en cada tarjeta con efecto de brillo sweep.
+   Tabla comparativa desplegable debajo de las tarjetas.
+
+7. GALERÍA — MASONRY CON LIGHTBOX
+   Fondo neutro oscuro. Grid masonry asimétrico con imágenes (placeholders 
+   con gradientes que simulan fotos de trabajos). Al click: lightbox con 
+   navegación y overlay negro. Efecto hover: zoom suave + overlay con nombre 
+   del barbero y tipo de servicio. Botón "Ver más en Instagram" al final 
+   con ícono animado.
+
+8. SECCIÓN DE VIDEOS
+   Fondo negro. Título: "El Arte en Movimiento"
+   Grid de 3 videos embebidos (YouTube placeholder iframes o thumbnails 
+   con play button personalizado en dorado):
+     - Video 1: "El ritual del afeitado clásico" 
+     - Video 2: "Proceso completo: Corte + Barba de autor"
+     - Video 3: "Cómo cuidar tu barba en casa"
+   Cada video tiene título, duración y descripción debajo.
+   En mobile: carrusel horizontal con swipe.
+   Al click en thumbnail: se abre en modal con el iframe del video.
+
+9. TESTIMONIOS — CARRUSEL EDITORIAL
+   Fondo crema. Comillas enormes en dorado como elemento decorativo.
+   Citas en Cormorant Garamond grande e itálica. Nombre + servicio debajo.
+   Estrellas doradas. Auto-play cada 4 segundos con dots de navegación.
+   Foto circular del cliente (avatar placeholder con iniciales).
+
+10. RESERVA TU CITA — FORMULARIO INTERACTIVO
+    Fondo oscuro con patrón geométrico sutil. Dos columnas:
+    Izquierda: texto motivacional + datos de contacto + mapa embed (Google Maps).
+    Derecha: formulario elegante con:
+      - Selección de servicio (dropdown estilizado)
+      - Selección de barbero/esteticista
+      - Calendario de disponibilidad (grid visual de días)
+      - Hora preferida (pills seleccionables: 9am, 10am, 11am...)
+      - Nombre y WhatsApp
+      - Botón "Confirmar cita" con animación de éxito (checkmark animado).
+
+11. FOOTER COMPLETO
+    Fondo negro. Logo centrado con tagline. 4 columnas:
+    [Servicios] [Productos] [Membresías] [Contacto + Redes]
+    Newsletter: input + botón "Únete al club"
+    Redes sociales con íconos SVG animados al hover.
+    Horario de atención con indicador live (verde si está abierto ahora).
+    Copyright + Términos + Política de privacidad.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚙️ REQUISITOS TÉCNICOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Un solo archivo HTML (CSS y JS embebidos)
+- Google Fonts cargadas desde CDN
+- Intersection Observer para animaciones de scroll
+- Canvas API para partículas en sección de membresías
+- Smooth scroll nativo (scroll-behavior: smooth)
+- 100% responsive: mobile-first
+- Sin frameworks externos (solo Vanilla JS + CSS puro)
+- Filtros de productos funcionales (JS puro)
+- Carrito de compras funcional en localStorage
+- Lightbox de galería en JS puro
+- Modal de video funcional
+- Indicador de "Abierto ahora" con lógica de horario real en JS
+- Todo el texto en español, tono sofisticado pero cercano
+- Nada genérico, nada que parezca IA, cada sección debe sentirse 
+  diseñada a mano por una agencia boutique de Milán para un cliente 
+  de lujo en Latinoamérica
+
+Hazlo extraordinario. Que cada pixel justifique su existencia.
