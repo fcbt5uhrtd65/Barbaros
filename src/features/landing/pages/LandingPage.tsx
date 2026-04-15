@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import razorImage from 'figma:asset/f0009898262226b4306dfd8c2828908156b736ba.png';
 import heroImage from '@/imports/ChatGPT_Image_12_abr_2026,_10_38_43_p.m..png';
+import contactImage from '@/assets/2.png';
 import Slider from 'react-slick';
 import {
   desktopLeftNav,
@@ -17,6 +18,27 @@ import {
   mobileNav,
 } from '@/features/landing/config/navigation';
 import { APP_BRAND } from '@/shared/config/app.constants';
+
+const HERO_VIDEO_URL = 'https://cdn.pixabay.com/video/2021/12/19/101956-659549551_large.mp4';
+
+const PROMO_VALIDITY_BY_DAY: Record<string, string> = {
+  LUNES: 'Válido solo lunes · 9AM a 8PM',
+  MARTES: 'Válido solo martes · 9AM a 8PM',
+  'MIÉRCOLES': 'Válido solo miércoles · 9AM a 8PM',
+  JUEVES: 'Válido solo jueves · 9AM a 8PM',
+  VIERNES: 'Válido solo viernes · 9AM a 8PM',
+  ESPECIAL: 'Válido toda la semana · Cupos limitados',
+};
+
+function getVoucherSerial(day: string, idx: number) {
+  const prefix = day.replace('É', 'E').slice(0, 3);
+  return `${prefix}-${String(1888 + idx * 23).padStart(4, '0')}-${String((idx + 1) * 19).padStart(3, '0')}`;
+}
+
+function getVoucherQrUrl(serial: string) {
+  const data = encodeURIComponent(`https://wa.me/573001234567?text=Quiero canjear el voucher ${serial}`);
+  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${data}`;
+}
 
 export function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -43,7 +65,7 @@ export function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-[#0B0B0B] overflow-x-hidden">
+    <div className="landing-minimal min-h-screen bg-white text-[#0B0B0B] overflow-x-hidden">
       {/* SCROLL PROGRESS */}
       <div className="fixed left-0 top-0 bottom-0 w-1 bg-white/5 z-50 hidden lg:block">
         <motion.div
@@ -171,37 +193,44 @@ export function LandingPage() {
           style={{ scale: heroScale }}
           className="absolute inset-0"
         >
-          <img
-            src={heroImage}
-            alt="Barbería Premium"
+          <video
             className="w-full h-full object-cover"
-          />
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={heroImage}
+          >
+            <source src={HERO_VIDEO_URL} type="video/mp4" />
+          </video>
           <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/70 via-[#0B0B0B]/40 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/80 via-transparent to-transparent" />
         </motion.div>
 
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-32 min-h-screen flex items-center">
-          <div className="max-w-3xl">
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-28 min-h-screen flex items-end">
+          <div className="w-full max-w-4xl mx-auto text-center bg-[#0B0B0B]/42 backdrop-blur-md border border-white/15 rounded-[28px] px-6 lg:px-10 py-8 lg:py-10 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex items-center gap-3 mb-8"
+              className="flex items-center justify-center gap-3 mb-6"
             >
               <div className="h-[1px] w-16 bg-[#D4AF37]" />
               <span className="text-[#D4AF37] text-[10px] tracking-[0.5em] font-['DM_Sans'] uppercase font-bold text-center">
                 Est. 1888 · Puerto Colombia
               </span>
+              <div className="h-[1px] w-16 bg-[#D4AF37]" />
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.4 }}
-              className="font-['Playfair_Display'] font-bold text-6xl lg:text-9xl text-white leading-[0.9] mb-8"
+              className="font-['Playfair_Display'] font-bold text-5xl lg:text-7xl text-white leading-[0.92] mb-5"
             >
               MÁS QUE
-              <span className="block text-5xl lg:text-8xl text-[#D4AF37] mt-4">
+              <span className="block text-4xl lg:text-6xl text-[#D4AF37] mt-3">
                 UN CORTE
               </span>
             </motion.h1>
@@ -210,7 +239,7 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="text-2xl lg:text-4xl text-white font-['Playfair_Display'] italic leading-tight mb-3"
+              className="text-xl lg:text-3xl text-white font-['Playfair_Display'] italic leading-tight mb-2"
             >
               Una experiencia bárbara
             </motion.p>
@@ -219,7 +248,7 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1 }}
-              className="text-base lg:text-lg text-white/70 font-light leading-relaxed mb-12 max-w-xl"
+              className="text-sm lg:text-base text-white/75 font-light leading-relaxed mb-8 max-w-2xl mx-auto"
             >
               Tradición artesanal · Maestría con navaja · Perfección milimétrica
             </motion.p>
@@ -228,12 +257,12 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.2 }}
-              className="flex flex-col sm:flex-row gap-4"
+              className="flex flex-col sm:flex-row gap-3 justify-center"
             >
               <motion.a
                 href="#servicios"
                 whileHover={{ x: 5 }}
-                className="bg-[#D4AF37] text-[#0B0B0B] px-10 py-4 font-bold text-sm tracking-wider uppercase inline-flex items-center gap-3 hover:bg-[#C9A84C] transition-all duration-300"
+                className="bg-[#D4AF37] text-[#0B0B0B] px-9 py-3.5 font-bold text-xs tracking-[0.2em] uppercase inline-flex items-center gap-2.5 hover:bg-[#C9A84C] transition-all duration-300 justify-center"
               >
                 Explorar Servicios
                 <ArrowRight className="w-4 h-4" />
@@ -242,7 +271,7 @@ export function LandingPage() {
               <motion.a
                 href="#ubicación"
                 whileHover={{ x: 5 }}
-                className="border-2 border-white/40 text-white px-10 py-4 font-bold text-sm tracking-wider uppercase inline-flex items-center gap-3 hover:bg-white/10 hover:border-white/60 transition-all duration-300 backdrop-blur-sm"
+                className="border-2 border-white/40 text-white px-9 py-3.5 font-bold text-xs tracking-[0.2em] uppercase inline-flex items-center gap-2.5 hover:bg-white/10 hover:border-white/60 transition-all duration-300 backdrop-blur-sm justify-center"
               >
                 Reservar Ahora
                 <ArrowRight className="w-4 h-4" />
@@ -283,11 +312,12 @@ export function LandingPage() {
       {/* FILOSOFÍA COMPACTA */}
       <section id="filosofía" className="relative bg-white px-[48px] py-[50px]">
         <div className="max-w-[1200px] mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-[1.12fr_0.88fr] gap-4 lg:gap-2 items-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              className="lg:pr-2"
             >
               <div className="flex items-center gap-2 mb-5">
                 <div className="w-8 h-[1px] bg-[#D4AF37]" />
@@ -310,12 +340,12 @@ export function LandingPage() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="flex justify-center lg:justify-end"
+              className="flex justify-center lg:justify-start lg:-ml-10"
             >
               <img
                 src={image_1e4fc8c63620d97226934be919f5f40a4bfc65db}
                 alt="Navaja"
-                className="w-64 h-auto"
+                className="w-56 lg:w-64 h-auto"
               />
             </motion.div>
           </div>
@@ -523,7 +553,11 @@ export function LandingPage() {
 
       {/* PROMOCIONES POR DÍA */}
       <section id="membresías" className="relative bg-white py-20 lg:py-28 px-6 lg:px-12 overflow-hidden">
-        <div className="max-w-[1400px] mx-auto">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-24 -right-10 w-80 h-80 rounded-full bg-[#D4AF37]/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-10 w-72 h-72 rounded-full bg-[#0B0B0B]/6 blur-3xl" />
+        </div>
+        <div className="max-w-[1700px] mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
             <motion.div
@@ -558,12 +592,12 @@ export function LandingPage() {
           </div>
 
           {/* Carrusel de Promociones Diarias */}
-          <div className="-mx-6 lg:-mx-12 px-[0px] py-[10px]">
+          <div className="-mx-2 lg:mx-0 px-0 py-2 bg-transparent">
             <Slider
               dots={true}
               infinite={true}
               speed={800}
-              slidesToShow={3}
+              slidesToShow={2}
               slidesToScroll={1}
               autoplay={true}
               autoplaySpeed={5000}
@@ -573,7 +607,7 @@ export function LandingPage() {
                 {
                   breakpoint: 1280,
                   settings: {
-                    slidesToShow: 2,
+                    slidesToShow: 1.5,
                   }
                 },
                 {
@@ -653,8 +687,12 @@ export function LandingPage() {
                   textColor: '#0B0B0B'
                 },
               ].map((promo, idx) => {
+                const voucherSerial = getVoucherSerial(promo.day, idx);
+                const voucherValidity = PROMO_VALIDITY_BY_DAY[promo.day] ?? 'Válido por tiempo limitado';
+                const qrUrl = getVoucherQrUrl(voucherSerial);
+
                 return (
-                  <div key={idx} className="px-3">
+                  <div key={idx} className="px-2">
                     <motion.div
                       initial={{ opacity: 0, y: 40 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -664,96 +702,105 @@ export function LandingPage() {
                         duration: 0.6,
                         ease: "easeOut"
                       }}
-                      whileHover={{
-                        y: -8,
-                        transition: { duration: 0.3 }
-                      }}
-                      className="relative overflow-hidden h-[420px] group cursor-pointer border border-white/10"
+                      whileHover={{ y: -4, transition: { duration: 0.25 } }}
+                      className="coupon-card relative overflow-hidden h-[335px] lg:h-[355px] group cursor-pointer rounded-[24px]"
                       style={{ backgroundColor: promo.bgColor }}
                     >
-                      {/* Gradiente sutil en hover */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <div className="coupon-card__grain" />
+                      <div className="coupon-card__notch coupon-card__notch--left" />
+                      <div className="coupon-card__notch coupon-card__notch--right" />
+                      <div className="coupon-card__dash coupon-card__dash--top" />
+                      <div className="coupon-card__dash coupon-card__dash--bottom" />
 
-                      {/* Contenido */}
-                      <div className="relative h-full p-8 flex flex-col justify-between">
-                        {/* Header: Día */}
-                        <div>
-                          <div
-                            className="text-[9px] tracking-[0.4em] uppercase mb-3 font-bold"
-                            style={{ color: promo.accentColor }}
-                          >
-                            {promo.day}
+                      <motion.div
+                        className="absolute top-0 left-[-35%] h-full w-[30%] blur-2xl opacity-20"
+                        style={{ background: `linear-gradient(90deg, transparent, ${promo.accentColor}, transparent)` }}
+                        animate={{ x: ['0%', '480%'] }}
+                        transition={{ duration: 5.6 + idx * 0.35, repeat: Infinity, ease: "linear" }}
+                      />
+
+                      <div className="relative z-10 h-full grid grid-rows-[1fr_78px]">
+                        <div className="grid grid-cols-[74px_1fr] min-h-0">
+                          <div className="coupon-card__stub flex items-center justify-center" style={{ borderColor: `${promo.accentColor}70` }}>
+                            <p
+                              className="font-['DM_Sans'] text-[10px] tracking-[0.24em] uppercase font-bold"
+                              style={{ color: promo.accentColor, writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+                            >
+                              Discount Coupon
+                            </p>
                           </div>
-                          <h3
-                            className="font-['Playfair_Display'] font-bold text-4xl lg:text-5xl leading-none mb-6"
-                            style={{ color: promo.textColor }}
-                          >
-                            {promo.title}
-                          </h3>
 
-                          {/* Línea decorativa */}
-                          <div
-                            className="h-[1px] w-16 mb-8"
-                            style={{ backgroundColor: promo.accentColor }}
-                          />
+                          <div className="relative p-4 lg:p-5">
+                            <div className="flex items-start justify-between gap-2 mb-3">
+                              <div>
+                                <p className="font-['DM_Sans'] text-[9px] tracking-[0.35em] uppercase font-bold mb-1" style={{ color: promo.accentColor }}>
+                                  {promo.day}
+                                </p>
+                                <h3 className="font-['Playfair_Display'] font-bold text-[22px] lg:text-[26px] leading-[0.95]" style={{ color: promo.textColor }}>
+                                  {promo.title}
+                                </h3>
+                              </div>
+                              <div className="px-3 py-1 text-[10px] font-bold tracking-[0.15em] uppercase border" style={{ borderColor: `${promo.accentColor}90`, color: promo.accentColor }}>
+                                -{promo.discount}
+                              </div>
+                            </div>
+
+                            <div className="border border-dashed p-3.5" style={{ borderColor: `${promo.accentColor}70` }}>
+                              <div className="grid grid-cols-[1fr_96px] gap-3 items-end">
+                                <div>
+                                  <p className="font-['Playfair_Display'] text-xl lg:text-2xl font-semibold leading-tight mb-1" style={{ color: promo.textColor }}>
+                                    {promo.service}
+                                  </p>
+
+                                  <div className="flex items-baseline gap-2 mb-2">
+                                    <span className="font-['Playfair_Display'] text-[34px] lg:text-[40px] leading-none font-bold" style={{ color: promo.textColor }}>
+                                      {promo.price}
+                                    </span>
+                                    <span className="text-base lg:text-lg line-through" style={{ color: `${promo.textColor}80` }}>
+                                      {promo.originalPrice}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex items-center justify-between gap-2 mb-3">
+                                    <p className="font-['DM_Sans'] text-[10px] tracking-[0.14em] uppercase" style={{ color: `${promo.textColor}D0` }}>
+                                      {voucherValidity}
+                                    </p>
+                                    <p className="font-['DM_Sans'] text-[9px] tracking-[0.18em] uppercase" style={{ color: promo.accentColor }}>
+                                      {voucherSerial}
+                                    </p>
+                                  </div>
+
+                                  <motion.button
+                                    whileHover={{ x: 4 }}
+                                    className="relative w-full py-2.5 font-bold text-[10px] tracking-[0.18em] uppercase flex items-center justify-between px-4 border-2 transition-all duration-300 overflow-hidden"
+                                    style={{
+                                      borderColor: promo.accentColor,
+                                      color: promo.textColor,
+                                      backgroundColor: `${promo.bgColor}B3`
+                                    }}
+                                  >
+                                    <span>Canjear Voucher</span>
+                                    <ArrowRight className="w-4 h-4" style={{ color: promo.accentColor }} />
+                                  </motion.button>
+                                </div>
+
+                                <div className="w-[96px] h-[96px] rounded-lg p-2 bg-[#F5ECD0] shadow-[0_10px_22px_rgba(0,0,0,0.25)]">
+                                  <img src={qrUrl} alt={`QR ${voucherSerial}`} className="w-full h-full object-cover rounded-sm" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
-                        {/* Servicio */}
-                        <div className="mb-8">
-                          <div
-                            className="font-['Playfair_Display'] text-2xl lg:text-3xl font-bold mb-2"
-                            style={{ color: promo.textColor }}
-                          >
-                            {promo.service}
-                          </div>
-
-                          {/* Badge de descuento */}
-                          <div
-                            className="inline-block px-4 py-2 text-xs font-bold tracking-wider uppercase mt-2"
-                            style={{
-                              backgroundColor: promo.accentColor,
-                              color: promo.bgColor
-                            }}
-                          >
-                            -{promo.discount} OFF
-                          </div>
-                        </div>
-
-                        {/* Precio */}
-                        <div>
-                          <div className="flex items-baseline gap-3 mb-6">
-                            <div
-                              className="font-['Playfair_Display'] text-5xl lg:text-6xl font-bold leading-none"
-                              style={{ color: promo.textColor }}
-                            >
-                              {promo.price}
-                            </div>
-                            <div
-                              className="text-xl line-through"
-                              style={{ color: `${promo.textColor}30` }}
-                            >
-                              {promo.originalPrice}
-                            </div>
-                          </div>
-
-                          {/* CTA Button */}
-                          <motion.button
-                            whileHover={{ x: 3 }}
-                            className="w-full py-4 font-bold text-[10px] tracking-[0.25em] uppercase flex items-center justify-between px-6 border-2 group/btn transition-all duration-300"
-                            style={{
-                              borderColor: promo.accentColor,
-                              color: promo.textColor
-                            }}
-                          >
-                            <span>Reservar Ahora</span>
-                            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-2 transition-transform" style={{ color: promo.accentColor }} />
-                          </motion.button>
+                        <div className="coupon-card__footer flex items-center justify-center px-4 lg:px-5" style={{ borderColor: `${promo.accentColor}50` }}>
+                          <p className="font-['DM_Sans'] text-[10px] tracking-[0.18em] uppercase" style={{ color: `${promo.accentColor}D4` }}>
+                            Escanea el QR para canjear en línea
+                          </p>
                         </div>
                       </div>
 
-                      {/* Border en hover */}
                       <div
-                        className="absolute inset-0 border-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                        className="absolute inset-0 border-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-[24px]"
                         style={{ borderColor: promo.accentColor }}
                       />
                     </motion.div>
@@ -817,7 +864,7 @@ export function LandingPage() {
       </div>
 
       {/* GALERÍA MINIMALISTA - GRID MODERNO */}
-      <section id="galería" className="relative bg-[#0B0B0B] py-20 lg:py-28 px-6 lg:px-12">
+      <section id="galería" className="relative bg-[#0B0B0B] py-16 lg:py-20 px-6 lg:px-12">
         <div className="max-w-[1200px] mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
@@ -858,7 +905,7 @@ export function LandingPage() {
               dots={false}
               infinite={true}
               speed={4000}
-              slidesToShow={3.5}
+              slidesToShow={4.2}
               slidesToScroll={1}
               autoplay={true}
               autoplaySpeed={0}
@@ -869,13 +916,13 @@ export function LandingPage() {
                 {
                   breakpoint: 1024,
                   settings: {
-                    slidesToShow: 2.5,
+                    slidesToShow: 3,
                   }
                 },
                 {
                   breakpoint: 640,
                   settings: {
-                    slidesToShow: 1.2,
+                    slidesToShow: 1.6,
                   }
                 }
               ]}
@@ -895,7 +942,7 @@ export function LandingPage() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.05 }}
-                    className="group relative overflow-hidden h-[350px] lg:h-[450px]"
+                    className="group relative overflow-hidden h-[250px] lg:h-[320px]"
                   >
                     <img
                       src={item.img}
@@ -926,7 +973,7 @@ export function LandingPage() {
               dots={false}
               infinite={true}
               speed={3500}
-              slidesToShow={3.5}
+              slidesToShow={4.2}
               slidesToScroll={1}
               autoplay={true}
               autoplaySpeed={0}
@@ -938,13 +985,13 @@ export function LandingPage() {
                 {
                   breakpoint: 1024,
                   settings: {
-                    slidesToShow: 2.5,
+                    slidesToShow: 3,
                   }
                 },
                 {
                   breakpoint: 640,
                   settings: {
-                    slidesToShow: 1.2,
+                    slidesToShow: 1.6,
                   }
                 }
               ]}
@@ -964,7 +1011,7 @@ export function LandingPage() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.05 }}
-                    className="group relative overflow-hidden h-[350px] lg:h-[450px]"
+                    className="group relative overflow-hidden h-[250px] lg:h-[320px]"
                   >
                     <img
                       src={item.img}
@@ -1010,61 +1057,36 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* UBICACIÓN MINIMALISTA */}
-      <section id="ubicación" className="relative py-20 lg:py-28 px-6 lg:px-12 bg-[#1A1A1A]">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+      {/* SECCIÓN DE CONTACTO CON IMAGEN */}
+      <section className="relative w-full bg-white py-0 px-0">
+        <div className="w-full h-[720px]">
+          <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-0 items-stretch h-full">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              className="flex flex-col justify-center bg-white p-8 lg:pl-16 lg:pr-8 lg:py-16"
             >
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-[1px] bg-[#D4AF37]" />
                 <span className="text-[#D4AF37] text-[9px] tracking-[0.4em] font-['DM_Sans'] uppercase">
-                  Visítanos
+                  Contacto
                 </span>
               </div>
-              <h2 className="font-['Playfair_Display'] font-bold text-4xl lg:text-5xl text-white mb-6">
-                El Sanctuario
+              <h2 className="font-['Playfair_Display'] font-bold text-4xl lg:text-5xl text-[#0B0B0B] mb-6">
+                Conéctate Con Nosotros
               </h2>
-
-              <div className="space-y-6 mb-8">
-                {[
-                  { icon: MapPin, label: 'Dirección', value: 'Calle Principal #123, Puerto Colombia' },
-                  { icon: Phone, label: 'WhatsApp', value: '+57 300 123 4567' },
-                  { icon: Clock, label: 'Horario', value: 'Lun - Sáb: 9AM - 8PM' },
-                  { icon: Instagram, label: 'Instagram', value: '@barbarosclub.1888' }
-                ].map((item, idx) => {
-                  const Icon = item.icon;
-                  return (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.1 }}
-                      className="flex gap-4"
-                    >
-                      <div className="w-10 h-10 bg-[#D4AF37] flex items-center justify-center flex-shrink-0">
-                        <Icon className="w-5 h-5 text-[#0B0B0B]" />
-                      </div>
-                      <div>
-                        <div className="text-[#D4AF37] text-[9px] tracking-wider uppercase mb-1">{item.label}</div>
-                        <div className="text-white text-sm">{item.value}</div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-
+              <p className="text-[#0B0B0B]/70 text-lg mb-8">
+                Estamos aquí para ayudarte con cualquier duda o para agendar tu próxima cita en BÁRBAROS.
+              </p>
               <motion.a
-                href="#servicios"
+                href="https://wa.me/573001234567"
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ x: 5 }}
-                className="inline-flex items-center gap-3 bg-[#D4AF37] text-[#0B0B0B] px-8 py-3 font-bold text-xs tracking-wider uppercase"
+                className="inline-flex items-center gap-3 bg-[#D4AF37] text-[#0B0B0B] px-8 py-3 font-bold text-xs tracking-wider uppercase w-fit"
               >
-                <Calendar className="w-4 h-4" />
-                Reservar Cita
+                WhatsApp
                 <ArrowRight className="w-4 h-4" />
               </motion.a>
             </motion.div>
@@ -1073,21 +1095,13 @@ export function LandingPage() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative h-[400px] overflow-hidden"
+              className="relative w-full h-full overflow-visible flex items-center justify-center lg:-ml-12"
             >
               <img
-                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800"
-                alt="Ubicación"
-                className="w-full h-full object-cover"
+                src={contactImage}
+                alt="Contacto"
+                className="w-[108%] h-[108%] max-w-none object-contain"
               />
-              <div className="absolute inset-0 bg-[#D4AF37]/20" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-[#D4AF37] text-[#0B0B0B] px-6 py-4 text-center">
-                  <MapPin className="w-8 h-8 mx-auto mb-2" />
-                  <p className="font-bold text-sm">BÁRBAROS CLUB</p>
-                  <p className="text-xs">Puerto Colombia</p>
-                </div>
-              </div>
             </motion.div>
           </div>
         </div>

@@ -1,4 +1,127 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=DM+Sans:wght@100;200;300;400;500;600;700&family=Bebas+Neue&family=Oswald:wght@200;300;400;500;600;700&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import './tailwind.css';
-@import './theme.css';
-@import './carousel.css';
+/* Premium coupon system inspired by physical gold vouchers */
+.coupon-card {
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	box-shadow: 0 20px 38px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+	isolation: isolate;
+}
+
+.coupon-card__grain {
+	position: absolute;
+	inset: 0;
+	background-image:
+		radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.16) 0, transparent 26%),
+		radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.11) 0, transparent 32%),
+		radial-gradient(circle at 30% 82%, rgba(0, 0, 0, 0.1) 0, transparent 28%),
+		radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+	background-size: auto, auto, auto, 4px 4px;
+	opacity: 0.88;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.coupon-card__notch {
+	position: absolute;
+	top: 50%;
+	width: 34px;
+	height: 72px;
+	background: #ffffff;
+	transform: translateY(-50%);
+	z-index: 30;
+	border-radius: 999px;
+}
+
+.coupon-card__notch--left {
+	left: -18px;
+}
+
+.coupon-card__notch--right {
+	right: -18px;
+}
+
+.coupon-card__dash {
+	position: absolute;
+	left: 20px;
+	right: 20px;
+	height: 2px;
+	background: repeating-linear-gradient(to right, rgba(255, 255, 255, 0.72) 0 10px, transparent 10px 16px);
+	opacity: 0.4;
+	z-index: 25;
+}
+
+.coupon-card__dash--top {
+	top: 10px;
+}
+
+.coupon-card__dash--bottom {
+	bottom: 10px;
+}
+
+.coupon-card__stub {
+	position: relative;
+	border-right: 1px dashed;
+	background: linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.08));
+}
+
+.coupon-card__stub::after {
+	content: '';
+	position: absolute;
+	inset: 10px;
+	border: 1px dashed rgba(255, 255, 255, 0.55);
+	pointer-events: none;
+}
+
+.coupon-card__footer {
+	border-top: 1px dashed;
+	background: linear-gradient(180deg, rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.62));
+}
+}
+
+.promo-voucher__dash {
+	position: absolute;
+	left: 18px;
+	right: 18px;
+	height: 2px;
+	opacity: 0.45;
+	background: repeating-linear-gradient(to right, rgba(255, 255, 255, 0.55) 0 8px, transparent 8px 14px);
+	z-index: 12;
+}
+
+.promo-voucher__dash--top {
+	top: 8px;
+}
+
+.promo-voucher__dash--bottom {
+	bottom: 8px;
+	opacity: 0.3;
+}
+
+.promo-voucher__stub {
+	position: relative;
+	background: linear-gradient(180deg, rgba(0, 0, 0, 0.26), rgba(0, 0, 0, 0.08));
+	z-index: 2;
+}
+
+.promo-voucher__stub::after {
+	content: '';
+	position: absolute;
+	inset: 10px;
+	border: 1px dashed rgba(255, 255, 255, 0.5);
+	pointer-events: none;
+}
+
+.promo-voucher__main {
+	position: relative;
+	z-index: 2;
+	overflow: hidden;
+}
+
+.promo-voucher__dots {
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+	background-size: 11px 11px;
+	opacity: 0.14;
+	pointer-events: none;
+}
