@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
   # Landing page barbería premium
 
@@ -9,3 +10,7 @@
 
   Run `npm run dev` to start the development server.
   
+=======
+# Barbaros
+E-commerce
+>>>>>>> 3bb9640002f30db063bce432e20a11997a03f7de
