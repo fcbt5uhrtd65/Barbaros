@@ -1,14 +1,14 @@
 import image_1e4fc8c63620d97226934be919f5f40a4bfc65db from 'figma:asset/1e4fc8c63620d97226934be919f5f40a4bfc65db.png'
-import image_6918a5336ec9c5c42895b9476a0d7fd87979c072 from 'figma:asset/6918a5336ec9c5c42895b9476a0d7fd87979c072.png'
 import { useState, useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import {
   Scissors, Star, Instagram, MapPin, Phone, Clock, Menu, X,
-  ArrowRight, Award, Crown, Shield, Sparkles, Calendar, Check, Zap
+  ArrowRight, Award, Crown, Shield, Sparkles, Calendar, Check, Zap, ChevronDown, FileDown
 } from 'lucide-react';
-import razorImage from 'figma:asset/f0009898262226b4306dfd8c2828908156b736ba.png';
-import heroImage from '@/imports/ChatGPT_Image_12_abr_2026,_10_38_43_p.m..png';
-import contactImage from '@/assets/2.png';
+import heroSlideOne from '@/assets/1.jpg';
+import heroSlideTwo from '@/assets/2.jpg';
+import heroSlideThree from '@/assets/3.jpg';
+import contactImage from '@/assets/2.jpg';
 import Slider from 'react-slick';
 import {
   desktopLeftNav,
@@ -19,7 +19,60 @@ import {
 } from '@/features/landing/config/navigation';
 import { APP_BRAND } from '@/shared/config/app.constants';
 
-const HERO_VIDEO_URL = 'https://cdn.pixabay.com/video/2021/12/19/101956-659549551_large.mp4';
+const HERO_SLIDES = [heroSlideOne, heroSlideTwo, heroSlideThree];
+
+const SERVICES_CATALOG = [
+  {
+    name: 'El Ritual Bárbaro',
+    desc: 'Corte arquitectónico + Afeitado con navaja + Perfilado + Masaje + Productos premium.',
+    price: '$120k',
+    time: '120 min',
+    icon: Sparkles,
+    image: heroSlideOne,
+    featured: true,
+  },
+  {
+    name: 'Fade Milimétrico',
+    desc: 'Degradado de precisión arquitectónica con técnicas de competencia mundial.',
+    price: '$40k',
+    time: '60 min',
+    icon: Award,
+    image: heroSlideTwo,
+  },
+  {
+    name: 'Navaja Artesanal',
+    desc: 'Afeitado tradicional con navaja de acero, toallas japonesas y aceites importados.',
+    price: '$30k',
+    time: '40 min',
+    icon: Crown,
+    image: heroSlideThree,
+  },
+  {
+    name: 'Corte de Tijera',
+    desc: 'Técnica japonesa sin máquina. Cada cabello cortado de forma individual.',
+    price: '$35k',
+    time: '45 min',
+    icon: Scissors,
+    image: heroSlideOne,
+  },
+  {
+    name: 'Perfilado Quirúrgico',
+    desc: 'Líneas perfectas y ángulos exactos con precisión de relojero suizo.',
+    price: '$20k',
+    time: '30 min',
+    icon: Shield,
+    image: heroSlideTwo,
+  },
+  {
+    name: 'Combo Bárbaro',
+    desc: 'Corte de tijera + afeitado con navaja para una experiencia completa.',
+    price: '$60k',
+    time: '90 min',
+    icon: Star,
+    image: heroSlideThree,
+    bestseller: true,
+  },
+];
 
 const PROMO_VALIDITY_BY_DAY: Record<string, string> = {
   LUNES: 'Válido solo lunes · 9AM a 8PM',
@@ -44,13 +97,11 @@ export function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-  });
+  const { scrollYProgress } = useScroll();
 
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.25], [1, 1.1]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,8 +115,178 @@ export function LandingPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveHeroSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const imageToDataUrl = (src: string) =>
+    new Promise<string>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+          reject(new Error('No se pudo crear contexto de canvas'));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/jpeg', 0.86));
+      };
+      img.onerror = () => reject(new Error('No se pudo cargar la imagen del catálogo'));
+      img.src = src;
+    });
+
+  const downloadCatalogPdf = async () => {
+    const { jsPDF } = await import('jspdf');
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
+
+    // Portada
+    pdf.setFillColor(11, 11, 11);
+    pdf.rect(0, 0, 210, 297, 'F');
+    
+    // Línea decorativa
+    pdf.setDrawColor(212, 175, 55);
+    pdf.setLineWidth(0.5);
+    pdf.line(16, 60, 194, 60);
+    
+    // Título principal
+    pdf.setTextColor(212, 175, 55);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(28);
+    pdf.text('BARBAROS', 105, 85, { align: 'center' });
+    
+    // Subtítulo
+    pdf.setFontSize(11);
+    pdf.setTextColor(255, 255, 255);
+    pdf.text('CATÁLOGO DE SERVICIOS PREMIUM', 105, 100, { align: 'center' });
+    pdf.text('Desde 1888 | Excelencia en Barbería', 105, 108, { align: 'center' });
+    
+    // Línea decorativa inferior
+    pdf.setDrawColor(212, 175, 55);
+    pdf.line(16, 120, 194, 120);
+    
+    // Descripción
+    pdf.setFontSize(10);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFont('helvetica', 'normal');
+    const coverText = pdf.splitTextToSize(
+      'Cada servicio es una experiencia única donde la pasión por la barbería se une con la precisión artesanal. Nuestros barberos son maestros en el arte ancestral de la navaja y el corte milimétrico.',
+      160
+    );
+    pdf.text(coverText, 105, 145, { align: 'center' });
+
+    // Servicios
+    for (let i = 0; i < SERVICES_CATALOG.length; i += 1) {
+      const service = SERVICES_CATALOG[i];
+      pdf.addPage();
+      pdf.setFillColor(11, 11, 11);
+      pdf.rect(0, 0, 210, 297, 'F');
+      
+      // Número de página y servicio
+      pdf.setTextColor(212, 175, 55);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(9);
+      pdf.text(`SERVICIO ${i + 1} / ${SERVICES_CATALOG.length}`, 16, 12);
+      
+      // Línea decorativa
+      pdf.setDrawColor(212, 175, 55);
+      pdf.setLineWidth(0.3);
+      pdf.line(16, 15, 194, 15);
+      
+      // Imagen
+      const imgData = await imageToDataUrl(service.image);
+      pdf.addImage(imgData, 'JPEG', 35, 25, 140, 90, undefined, 'FAST');
+      
+      // Nombre del servicio
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(20);
+      pdf.text(service.name, 105, 130, { align: 'center' });
+      
+      // Separador
+      pdf.setDrawColor(212, 175, 55);
+      pdf.setLineWidth(0.2);
+      pdf.line(40, 135, 170, 135);
+      
+      // Descripción
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.setTextColor(200, 200, 200);
+      const description = pdf.splitTextToSize(service.desc, 160);
+      pdf.text(description, 105, 145, { align: 'center', maxWidth: 160 });
+      
+      // Sección de detalles
+      const detailsY = 195;
+      pdf.setDrawColor(212, 175, 55);
+      pdf.line(16, detailsY - 5, 194, detailsY - 5);
+      
+      // Precio
+      pdf.setTextColor(212, 175, 55);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(12);
+      pdf.text('PRECIO', 35, detailsY);
+      pdf.setFontSize(16);
+      pdf.text(service.price, 35, detailsY + 8);
+      
+      // Duración
+      pdf.setTextColor(212, 175, 55);
+      pdf.setFontSize(12);
+      pdf.text('DURACIÓN', 105, detailsY);
+      pdf.setFontSize(16);
+      pdf.text(service.time, 105, detailsY + 8);
+      
+      // Insignia de destacado
+      if (service.featured || service.bestseller) {
+        pdf.setFillColor(212, 175, 55);
+        pdf.rect(145, detailsY - 2, 50, 18, 'F');
+        pdf.setTextColor(11, 11, 11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10);
+        pdf.text(
+          service.featured ? 'DESTACADO' : 'BESTSELLER',
+          170,
+          detailsY + 5,
+          { align: 'center' }
+        );
+      }
+      
+      // Footer
+      pdf.setTextColor(212, 175, 55);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.text('BARBAROS | Excelencia Barbería desde 1888', 105, 285, { align: 'center' });
+    }
+
+    pdf.save('catalogo-servicios-barbaros.pdf');
+  };
+
   return (
-    <div className="landing-minimal min-h-screen bg-white text-[#0B0B0B] overflow-x-hidden">
+    <div className="landing-minimal min-h-screen bg-white text-[#0B0B0B] overflow-x-hidden font-['Manrope']">
+      {/* BOTÓN WHATSAPP FLOTANTE */}
+      <motion.a
+        href="https://wa.me/573001234567"
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1, duration: 0.5 }}
+        whileHover={{ scale: 1.1 }}
+        className="fixed bottom-8 right-8 z-30 bg-[#25D366] text-white p-4 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow"
+        style={{ backdropFilter: 'blur(10px)' }}
+      >
+        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.411-2.391-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.946 1.23l-.355.192-.368-.06c-1.286-.113-2.430-.511-3.428-1.218l-.744-.524-.816.823c-.248.25-.637.675-.637 1.694 0 1.289.465 2.575 1.282 3.603l.42.485-.5.328c-.961.624-1.657 1.462-2.081 2.48l-.27.692.691.423c2.669 1.635 5.812 2.586 9.012 2.586 4.677 0 9.012-1.901 12.117-5.354.31-.324.607-.67.886-1.032.138-.181.27-.365.39-.551l.386-.617-.557-.363c-.368-.237-.888-.601-1.436-1.093-.48-.433-.99-.91-1.524-1.425-.534-.515-1.037-.948-1.513-1.3l-.493-.377z"/>
+        </svg>
+      </motion.a>
+
       {/* SCROLL PROGRESS */}
       <div className="fixed left-0 top-0 bottom-0 w-1 bg-white/5 z-50 hidden lg:block">
         <motion.div
@@ -80,8 +301,8 @@ export function LandingPage() {
           ? 'bg-[#0B0B0B]/90 backdrop-blur-xl border-b border-white/5'
           : 'bg-transparent'
       }`}>
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-24">
+        <div className="max-w-[1360px] mx-auto px-4 lg:px-8">
+          <div className="flex items-center justify-between h-20">
             {/* Logo Centrado */}
             <motion.a
               href="#inicio"
@@ -89,12 +310,12 @@ export function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center z-50"
             >
-              <h1 className="font-['Playfair_Display'] font-bold text-2xl lg:text-3xl text-white tracking-tight">
+              <h1 className="font-['Unbounded'] font-bold text-xl lg:text-2xl text-white tracking-tight uppercase">
                 {APP_BRAND.name}
               </h1>
               <div className="flex items-center gap-2 mt-1">
                 <div className="h-[1px] w-6 bg-[#D4AF37]" />
-                <span className="text-[#D4AF37] text-[8px] tracking-[0.4em] font-['DM_Sans'] uppercase">
+                <span className="text-[#D4AF37] text-[8px] tracking-[0.4em] font-['Manrope'] uppercase">
                   {APP_BRAND.foundationLabel}
                 </span>
                 <div className="h-[1px] w-6 bg-[#D4AF37]" />
@@ -110,7 +331,7 @@ export function LandingPage() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.08 }}
-                  className="text-white/70 hover:text-[#D4AF37] transition-colors text-[10px] tracking-[0.25em] font-['DM_Sans'] uppercase font-medium"
+                  className="text-white/70 hover:text-[#D4AF37] transition-colors text-[10px] tracking-[0.2em] font-['Manrope'] uppercase font-medium"
                 >
                   {item}
                 </motion.a>
@@ -126,7 +347,7 @@ export function LandingPage() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: (idx + 2) * 0.08 }}
-                  className="text-white/70 hover:text-[#D4AF37] transition-colors text-[10px] tracking-[0.25em] font-['DM_Sans'] uppercase font-medium"
+                  className="text-white/70 hover:text-[#D4AF37] transition-colors text-[10px] tracking-[0.2em] font-['Manrope'] uppercase font-medium"
                 >
                   {item}
                 </motion.a>
@@ -193,91 +414,119 @@ export function LandingPage() {
           style={{ scale: heroScale }}
           className="absolute inset-0"
         >
-          <video
-            className="w-full h-full object-cover"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={heroImage}
-          >
-            <source src={HERO_VIDEO_URL} type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/70 via-[#0B0B0B]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/80 via-transparent to-transparent" />
+          {HERO_SLIDES.map((slide, index) => (
+            <motion.img
+              key={`${slide}-${index}`}
+              src={slide}
+              alt="Barber hero background"
+              className="absolute inset-0 w-full h-full object-cover"
+              initial={false}
+              animate={{
+                opacity: index === activeHeroSlide ? 1 : 0,
+                scale: index === activeHeroSlide ? 1.02 : 1.1,
+              }}
+              transition={{
+                opacity: { duration: 1.1, ease: 'easeInOut' },
+                scale: { duration: 5.5, ease: 'linear' },
+              }}
+            />
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/55 to-black/70" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_55%)]" />
         </motion.div>
 
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-28 min-h-screen flex items-end">
-          <div className="w-full max-w-4xl mx-auto text-center bg-[#0B0B0B]/42 backdrop-blur-md border border-white/15 rounded-[28px] px-6 lg:px-10 py-8 lg:py-10 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+        <div className="relative z-10 min-h-screen w-full px-4 lg:px-8 flex items-center justify-center">
+          <div className="w-full max-w-3xl text-center pt-20 lg:pt-24">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex items-center justify-center gap-3 mb-6"
+              transition={{ duration: 0.7, delay: 0.15 }}
+              className="mb-5"
             >
-              <div className="h-[1px] w-16 bg-[#D4AF37]" />
-              <span className="text-[#D4AF37] text-[10px] tracking-[0.5em] font-['DM_Sans'] uppercase font-bold text-center">
-                Est. 1888 · Puerto Colombia
+              <span className="text-white/85 text-[11px] tracking-[0.42em] font-['Manrope'] uppercase font-semibold">
+                Stay Sharp, Look Good
               </span>
-              <div className="h-[1px] w-16 bg-[#D4AF37]" />
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.4 }}
-              className="font-['Playfair_Display'] font-bold text-5xl lg:text-7xl text-white leading-[0.92] mb-5"
+              transition={{ duration: 0.95, delay: 0.35 }}
+              className="font-['Unbounded'] font-bold text-3xl sm:text-4xl lg:text-6xl text-white uppercase leading-[1] tracking-tight mb-6"
             >
-              MÁS QUE
-              <span className="block text-4xl lg:text-6xl text-[#D4AF37] mt-3">
-                UN CORTE
-              </span>
+              NYC'S Favourite
+              <span className="block">Barber Shop.</span>
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="text-xl lg:text-3xl text-white font-['Playfair_Display'] italic leading-tight mb-2"
+              transition={{ duration: 0.7, delay: 0.65 }}
+              className="text-white/80 text-[10px] sm:text-xs tracking-[0.24em] uppercase mb-6 font-['Manrope']"
             >
-              Una experiencia bárbara
+              Broadway St, NYC. Appointment | 855 100 4444
             </motion.p>
 
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
+            {/* Stats de Credibilidad */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1 }}
-              className="text-sm lg:text-base text-white/75 font-light leading-relaxed mb-8 max-w-2xl mx-auto"
+              transition={{ duration: 0.7, delay: 0.75 }}
+              className="flex items-center justify-center gap-8 mb-8 text-white/70 text-[9px] tracking-wider"
             >
-              Tradición artesanal · Maestría con navaja · Perfección milimétrica
-            </motion.p>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"/>
+                <span>Desde 1888</span>
+              </div>
+              <div className="w-[1px] h-4 bg-white/20"/>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"/>
+                <span>+10K satisfechos</span>
+              </div>
+              <div className="w-[1px] h-4 bg-white/20"/>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"/>
+                <span>Garantía 100%</span>
+              </div>
+            </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.2 }}
-              className="flex flex-col sm:flex-row gap-3 justify-center"
+              transition={{ duration: 0.7, delay: 0.85 }}
+              className="flex justify-center"
             >
               <motion.a
-                href="#servicios"
-                whileHover={{ x: 5 }}
-                className="bg-[#D4AF37] text-[#0B0B0B] px-9 py-3.5 font-bold text-xs tracking-[0.2em] uppercase inline-flex items-center gap-2.5 hover:bg-[#C9A84C] transition-all duration-300 justify-center"
-              >
-                Explorar Servicios
-                <ArrowRight className="w-4 h-4" />
-              </motion.a>
-
-              <motion.a
                 href="#ubicación"
-                whileHover={{ x: 5 }}
-                className="border-2 border-white/40 text-white px-9 py-3.5 font-bold text-xs tracking-[0.2em] uppercase inline-flex items-center gap-2.5 hover:bg-white/10 hover:border-white/60 transition-all duration-300 backdrop-blur-sm justify-center"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-white text-[#0B0B0B] px-8 py-3.5 font-['Manrope'] font-bold text-[11px] tracking-[0.16em] uppercase inline-flex items-center justify-center hover:bg-[#F3F3F3] transition-colors duration-300 shadow-[0_12px_35px_rgba(0,0,0,0.28)]"
               >
-                Reservar Ahora
-                <ArrowRight className="w-4 h-4" />
+                Book Appointment
               </motion.a>
             </motion.div>
           </div>
+        </div>
+
+        <motion.a
+          href="#servicios"
+          aria-label="Ir a servicios"
+          className="absolute left-1/2 -translate-x-1/2 bottom-10 z-20 w-11 h-11 rounded-full border border-white/45 text-white flex items-center justify-center backdrop-blur-sm bg-black/20"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <ChevronDown className="w-5 h-5" />
+        </motion.a>
+
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-4 z-20 flex items-center gap-2">
+          {HERO_SLIDES.map((_, index) => (
+            <span
+              key={index}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                index === activeHeroSlide ? 'w-8 bg-white' : 'w-3 bg-white/45'
+              }`}
+            />
+          ))}
         </div>
       </section>
 
@@ -309,46 +558,131 @@ export function LandingPage() {
         </svg>
       </div>
 
-      {/* FILOSOFÍA COMPACTA */}
-      <section id="filosofía" className="relative bg-white px-[48px] py-[50px]">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="grid lg:grid-cols-[1.12fr_0.88fr] gap-4 lg:gap-2 items-center">
+      {/* FILOSOFÍA MINIMALISTA CREATIVA */}
+      <section id="filosofía" className="relative bg-white px-4 lg:px-12 py-20 lg:py-28 overflow-hidden">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-8 lg:gap-20 items-center">
+            {/* Contenido Izquierdo - Minimalista */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="lg:pr-2"
+              transition={{ duration: 0.9 }}
+              className="space-y-6 lg:space-y-8"
             >
-              <div className="flex items-center gap-2 mb-5">
-                <div className="w-8 h-[1px] bg-[#D4AF37]" />
-                <span className="text-[#D4AF37] text-[9px] tracking-[0.4em] font-['DM_Sans'] uppercase">
-                  Legado
-                </span>
-              </div>
+              {/* Pequeña etiqueta */}
+              <motion.span
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="inline-block text-[#D4AF37] text-[9px] tracking-[0.6em] font-['Manrope'] font-bold uppercase"
+              >
+                1888
+              </motion.span>
 
-              <h2 className="font-['Playfair_Display'] font-bold text-4xl lg:text-5xl text-[#0B0B0B] leading-tight mb-5">
-                Barberos, no peluqueros
-              </h2>
+              {/* Título Ultra Bold */}
+              <motion.h2
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="font-['Unbounded'] font-black text-5xl sm:text-6xl lg:text-8xl leading-[0.9] text-[#0B0B0B] uppercase tracking-tighter"
+              >
+                Barberos<br />
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.4 }}
+                  className="text-[#D4AF37]"
+                >
+                  No<br />Peluqueros
+                </motion.span>
+              </motion.h2>
 
-              <p className="text-lg text-[#0B0B0B]/60 leading-relaxed">
-                Desde 1888, dominamos el arte ancestral de la navaja, 
-                el corte con tijera y el perfilado milimétrico.
-              </p>
+              {/* Descripción Minimalista */}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.5 }}
+                className="text-base lg:text-lg text-[#0B0B0B]/60 leading-relaxed font-['Manrope'] max-w-md"
+              >
+                Dominamos el arte ancestral de la navaja, el corte milimétrico y la precisión artesanal. Cada barba es un masterpiece.
+              </motion.p>
+
+              {/* CTA Simple */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.6 }}
+              >
+                <motion.a
+                  href="#servicios"
+                  whileHover={{ x: 8 }}
+                  className="inline-flex items-center gap-3 text-sm tracking-wider uppercase font-bold text-[#0B0B0B] group"
+                >
+                  Ver Catálogo Completo
+                  <motion.div
+                    initial={{ x: 0 }}
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </motion.div>
+                </motion.a>
+              </motion.div>
             </motion.div>
 
+            {/* Imagen PNG - Limpia sin fondos */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="flex justify-center lg:justify-start lg:-ml-10"
+              transition={{ duration: 0.9, delay: 0.3 }}
+              className="relative flex items-center justify-center"
             >
-              <img
+              {/* Decoración minimalista detrás */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-[#D4AF37]/8 blur-3xl"
+              />
+              
+              {/* Imagen limpia */}
+              <motion.img
                 src={image_1e4fc8c63620d97226934be919f5f40a4bfc65db}
-                alt="Navaja"
-                className="w-56 lg:w-64 h-auto"
+                alt="Navaja Artesanal"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.9, delay: 0.3 }}
+                className="relative z-10 w-full max-w-md h-auto drop-shadow-[0_40px_80px_rgba(0,0,0,0.15)]"
+              />
+              
+              {/* Línea decorativa lateral */}
+              <motion.div
+                initial={{ scaleY: 0 }}
+                whileInView={{ scaleY: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="absolute -left-12 top-1/2 -translate-y-1/2 w-1 h-40 bg-gradient-to-b from-transparent via-[#D4AF37] to-transparent origin-center"
               />
             </motion.div>
           </div>
+
+          {/* Línea decorativa inferior */}
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="mt-16 lg:mt-20 h-[1px] w-32 bg-gradient-to-r from-[#D4AF37] to-transparent origin-left"
+          />
         </div>
       </section>
 
@@ -375,8 +709,40 @@ export function LandingPage() {
         </svg>
       </div>
 
+      {/* SECCIÓN DIFERENCIADORA */}
+      <section className="relative bg-[#0B0B0B] py-12 lg:py-16 px-4 lg:px-8">
+        <div className="max-w-[1200px] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="grid lg:grid-cols-3 gap-8"
+          >
+            {/* Por Qué Nosotros */}
+            <div className="border border-[#D4AF37]/30 rounded-lg p-8 hover:border-[#D4AF37]/70 transition-colors">
+              <h3 className="font-['Unbounded'] font-bold text-xl text-[#D4AF37] mb-3 uppercase tracking-tight">Experiencia</h3>
+              <p className="text-white/60 text-sm leading-relaxed">
+                135 años de dominio en el arte ancestral de la barbería. Maestría en cada corte.
+              </p>
+            </div>
+            <div className="border border-[#D4AF37]/30 rounded-lg p-8 hover:border-[#D4AF37]/70 transition-colors">
+              <h3 className="font-['Unbounded'] font-bold text-xl text-[#D4AF37] mb-3 uppercase tracking-tight">Calidad Premium</h3>
+              <p className="text-white/60 text-sm leading-relaxed">
+                Productos importados y técnicas de competencia mundial. Precisión milimétrica garantizada.
+              </p>
+            </div>
+            <div className="border border-[#D4AF37]/30 rounded-lg p-8 hover:border-[#D4AF37]/70 transition-colors">
+              <h3 className="font-['Unbounded'] font-bold text-xl text-[#D4AF37] mb-3 uppercase tracking-tight">Satisfacción 100%</h3>
+              <p className="text-white/60 text-sm leading-relaxed">
+                Si no quedas satisfecho, lo remediamos sin costo. Tu confianza es nuestro compromiso.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* SERVICIOS - DISEÑO MINIMALISTA RESTRUCTURADO */}
-      <section id="servicios" className="relative bg-[#0B0B0B] py-20 lg:py-28 px-6 lg:px-12">
+      <section id="servicios" className="relative bg-[#0B0B0B] py-14 lg:py-20 px-4 lg:px-8">
         <div className="max-w-[1200px] mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
@@ -396,7 +762,7 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-['Playfair_Display'] font-bold text-5xl lg:text-6xl text-white mb-4"
+              className="font-['Unbounded'] font-semibold text-4xl lg:text-5xl text-white mb-4 uppercase tracking-tight"
             >
               El Arsenal Bárbaro
             </motion.h2>
@@ -409,57 +775,34 @@ export function LandingPage() {
             >
               Técnicas ancestrales perfeccionadas durante 135 años
             </motion.p>
+
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <motion.button
+                onClick={downloadCatalogPdf}
+                whileHover={{ y: -2 }}
+                className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/70 px-5 py-2.5 text-[11px] font-bold tracking-[0.14em] uppercase text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors"
+              >
+                <FileDown className="w-4 h-4" />
+                Catálogo PDF
+              </motion.button>
+              <motion.a
+                href="https://wa.me/573001234567"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                className="inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-6 py-2.5 text-[11px] font-bold tracking-[0.14em] uppercase text-[#0B0B0B] hover:bg-[#C9A84C] transition-colors"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.411-2.391-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.946 1.23l-.355.192-.368-.06c-1.286-.113-2.430-.511-3.428-1.218l-.744-.524-.816.823c-.248.25-.637.675-.637 1.694 0 1.289.465 2.575 1.282 3.603l.42.485-.5.328c-.961.624-1.657 1.462-2.081 2.48l-.27.692.691.423c2.669 1.635 5.812 2.586 9.012 2.586 4.677 0 9.012-1.901 12.117-5.354.31-.324.607-.67.886-1.032.138-.181.27-.365.39-.551l.386-.617-.557-.363c-.368-.237-.888-.601-1.436-1.093-.48-.433-.99-.91-1.524-1.425-.534-.515-1.037-.948-1.513-1.3l-.493-.377z"/>
+                </svg>
+                Agendar Cita
+              </motion.a>
+            </div>
           </div>
 
           {/* Lista de Servicios - Minimalista */}
           <div className="space-y-6">
-            {[
-              {
-                name: 'El Ritual Bárbaro',
-                desc: 'Corte arquitectónico + Afeitado con navaja + Perfilado + Masaje + Productos premium',
-                price: '$120k',
-                time: '120 min',
-                icon: Sparkles,
-                featured: true
-              },
-              {
-                name: 'Fade Milimétrico',
-                desc: 'Degradado de precisión arquitectónica con técnicas de competencia mundial',
-                price: '$40k',
-                time: '60 min',
-                icon: Award
-              },
-              {
-                name: 'Navaja Artesanal',
-                desc: 'Afeitado tradicional con navaja de acero · Toallas japonesas · Aceites importados',
-                price: '$30k',
-                time: '40 min',
-                icon: Crown
-              },
-              {
-                name: 'Corte de Tijera',
-                desc: 'Técnica japonesa. Sin máquina. Cada cabello cortado individualmente',
-                price: '$35k',
-                time: '45 min',
-                icon: Scissors
-              },
-              {
-                name: 'Perfilado Quirúrgico',
-                desc: 'Líneas perfectas. Ángulos exactos. Precisión de relojero suizo',
-                price: '$20k',
-                time: '30 min',
-                icon: Shield
-              },
-              {
-                name: 'Combo Bárbaro',
-                desc: 'Corte de tijera + Afeitado con navaja. La experiencia completa',
-                price: '$60k',
-                time: '90 min',
-                icon: Star,
-                bestseller: true
-              }
-            ].map((service, idx) => {
-              const Icon = service.icon;
+            {SERVICES_CATALOG.map((service, idx) => {
               return (
                 <motion.div
                   key={idx}
@@ -468,27 +811,24 @@ export function LandingPage() {
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.05 }}
                   className={`group relative border-t border-white/10 pt-6 hover:border-[#D4AF37]/30 transition-all duration-500 ${
-                    service.featured ? 'bg-[#D4AF37]/5 -mx-6 px-6 py-8' : ''
+                    service.featured ? 'bg-[#D4AF37]/5 -mx-4 lg:-mx-5 px-4 lg:px-5 py-6' : ''
                   }`}
                 >
                   <div className="grid lg:grid-cols-12 gap-6 items-center">
-                    {/* Icono */}
-                    
-
                     {/* Info */}
                     <div className="lg:col-span-7">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-['Playfair_Display'] font-bold text-2xl lg:text-3xl text-white">
+                      <div className="flex items-center gap-3 mb-2 flex-wrap">
+                        <h3 className="font-['Unbounded'] font-semibold text-xl lg:text-2xl text-white uppercase tracking-tight">
                           {service.name}
                         </h3>
                         {service.featured && (
                           <span className="bg-[#D4AF37] text-[#0B0B0B] px-3 py-1 text-[8px] tracking-wider uppercase font-bold">
-                            Ritual Completo
+                            ⭐ Recomendado
                           </span>
                         )}
                         {service.bestseller && (
                           <span className="bg-[#D4AF37] text-[#0B0B0B] px-3 py-1 text-[8px] tracking-wider uppercase font-bold">
-                            Bestseller
+                            🏆 Top Ventas
                           </span>
                         )}
                       </div>
@@ -498,10 +838,10 @@ export function LandingPage() {
                     </div>
 
                     {/* Precio y Tiempo */}
-                    <div className="lg:col-span-3 flex lg:justify-end gap-8 items-center">
+                    <div className="lg:col-span-4 flex lg:justify-end gap-8 items-center">
                       <div>
                         <div className="text-white/30 text-[9px] tracking-wider uppercase mb-1">Precio</div>
-                        <div className="font-['Playfair_Display'] text-3xl text-white font-bold">
+                        <div className="font-['Unbounded'] text-2xl text-white font-bold tracking-tight">
                           {service.price}
                         </div>
                       </div>
@@ -513,9 +853,17 @@ export function LandingPage() {
                       </div>
                     </div>
 
-                    {/* Arrow */}
-                    <div className="lg:col-span-1 flex lg:justify-end">
-                      <ArrowRight className="w-5 h-5 text-[#D4AF37] opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500" />
+                    {/* CTA Button */}
+                    <div className="lg:col-span-1 hidden lg:flex lg:justify-end">
+                      <motion.a
+                        href="https://wa.me/573001234567"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.05 }}
+                        className="text-[10px] font-bold tracking-wider uppercase px-4 py-2 border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10 rounded transition-colors"
+                      >
+                        Agendar
+                      </motion.a>
                     </div>
                   </div>
                 </motion.div>
@@ -552,12 +900,12 @@ export function LandingPage() {
       
 
       {/* PROMOCIONES POR DÍA */}
-      <section id="membresías" className="relative bg-white py-20 lg:py-28 px-6 lg:px-12 overflow-hidden">
+      <section id="membresías" className="relative bg-white py-14 lg:py-20 px-4 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-24 -right-10 w-80 h-80 rounded-full bg-[#D4AF37]/10 blur-3xl" />
           <div className="absolute -bottom-24 -left-10 w-72 h-72 rounded-full bg-[#0B0B0B]/6 blur-3xl" />
         </div>
-        <div className="max-w-[1700px] mx-auto">
+        <div className="max-w-[1280px] mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
             <motion.div
@@ -576,7 +924,7 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-['Playfair_Display'] font-bold text-5xl lg:text-6xl text-[#0B0B0B] mb-4"
+              className="font-['Unbounded'] font-semibold text-4xl lg:text-5xl text-[#0B0B0B] mb-4 uppercase tracking-tight"
             >
               Cada Día Es Una Oferta
             </motion.h2>
@@ -723,7 +1071,7 @@ export function LandingPage() {
                         <div className="grid grid-cols-[74px_1fr] min-h-0">
                           <div className="coupon-card__stub flex items-center justify-center" style={{ borderColor: `${promo.accentColor}70` }}>
                             <p
-                              className="font-['DM_Sans'] text-[10px] tracking-[0.24em] uppercase font-bold"
+                              className="font-['Manrope'] text-[10px] tracking-[0.24em] uppercase font-bold"
                               style={{ color: promo.accentColor, writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
                             >
                               Discount Coupon
@@ -733,10 +1081,10 @@ export function LandingPage() {
                           <div className="relative p-4 lg:p-5">
                             <div className="flex items-start justify-between gap-2 mb-3">
                               <div>
-                                <p className="font-['DM_Sans'] text-[9px] tracking-[0.35em] uppercase font-bold mb-1" style={{ color: promo.accentColor }}>
+                                <p className="font-['Manrope'] text-[9px] tracking-[0.35em] uppercase font-bold mb-1" style={{ color: promo.accentColor }}>
                                   {promo.day}
                                 </p>
-                                <h3 className="font-['Playfair_Display'] font-bold text-[22px] lg:text-[26px] leading-[0.95]" style={{ color: promo.textColor }}>
+                                <h3 className="font-['Unbounded'] font-semibold text-[20px] lg:text-[23px] leading-[1] uppercase tracking-tight" style={{ color: promo.textColor }}>
                                   {promo.title}
                                 </h3>
                               </div>
@@ -748,12 +1096,12 @@ export function LandingPage() {
                             <div className="border border-dashed p-3.5" style={{ borderColor: `${promo.accentColor}70` }}>
                               <div className="grid grid-cols-[1fr_96px] gap-3 items-end">
                                 <div>
-                                  <p className="font-['Playfair_Display'] text-xl lg:text-2xl font-semibold leading-tight mb-1" style={{ color: promo.textColor }}>
+                                  <p className="font-['Unbounded'] text-lg lg:text-xl font-semibold leading-tight mb-1 uppercase tracking-tight" style={{ color: promo.textColor }}>
                                     {promo.service}
                                   </p>
 
                                   <div className="flex items-baseline gap-2 mb-2">
-                                    <span className="font-['Playfair_Display'] text-[34px] lg:text-[40px] leading-none font-bold" style={{ color: promo.textColor }}>
+                                    <span className="font-['Unbounded'] text-[30px] lg:text-[34px] leading-none font-bold tracking-tight" style={{ color: promo.textColor }}>
                                       {promo.price}
                                     </span>
                                     <span className="text-base lg:text-lg line-through" style={{ color: `${promo.textColor}80` }}>
@@ -762,10 +1110,10 @@ export function LandingPage() {
                                   </div>
 
                                   <div className="flex items-center justify-between gap-2 mb-3">
-                                    <p className="font-['DM_Sans'] text-[10px] tracking-[0.14em] uppercase" style={{ color: `${promo.textColor}D0` }}>
+                                    <p className="font-['Manrope'] text-[10px] tracking-[0.14em] uppercase" style={{ color: `${promo.textColor}D0` }}>
                                       {voucherValidity}
                                     </p>
-                                    <p className="font-['DM_Sans'] text-[9px] tracking-[0.18em] uppercase" style={{ color: promo.accentColor }}>
+                                    <p className="font-['Manrope'] text-[9px] tracking-[0.18em] uppercase" style={{ color: promo.accentColor }}>
                                       {voucherSerial}
                                     </p>
                                   </div>
@@ -793,16 +1141,11 @@ export function LandingPage() {
                         </div>
 
                         <div className="coupon-card__footer flex items-center justify-center px-4 lg:px-5" style={{ borderColor: `${promo.accentColor}50` }}>
-                          <p className="font-['DM_Sans'] text-[10px] tracking-[0.18em] uppercase" style={{ color: `${promo.accentColor}D4` }}>
+                          <p className="font-['Manrope'] text-[10px] tracking-[0.18em] uppercase" style={{ color: `${promo.accentColor}D4` }}>
                             Escanea el QR para canjear en línea
                           </p>
                         </div>
                       </div>
-
-                      <div
-                        className="absolute inset-0 border-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-[24px]"
-                        style={{ borderColor: promo.accentColor }}
-                      />
                     </motion.div>
                   </div>
                 );
@@ -864,7 +1207,7 @@ export function LandingPage() {
       </div>
 
       {/* GALERÍA MINIMALISTA - GRID MODERNO */}
-      <section id="galería" className="relative bg-[#0B0B0B] py-16 lg:py-20 px-6 lg:px-12">
+      <section id="galería" className="relative bg-[#0B0B0B] py-12 lg:py-16 px-4 lg:px-8">
         <div className="max-w-[1200px] mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
@@ -884,7 +1227,7 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-['Playfair_Display'] font-bold text-5xl lg:text-6xl text-white mb-4"
+              className="font-['Unbounded'] font-semibold text-4xl lg:text-5xl text-white mb-4 uppercase tracking-tight"
             >
               Trabajos Destacados
             </motion.h2>
@@ -954,7 +1297,7 @@ export function LandingPage() {
                     {/* Contenido en hover */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                       <div className="h-[1px] w-12 bg-[#D4AF37] mb-3" />
-                      <h3 className="font-['Playfair_Display'] font-bold text-xl text-white">
+                      <h3 className="font-['Unbounded'] font-semibold text-lg text-white uppercase tracking-tight">
                         {item.label}
                       </h3>
                     </div>
@@ -1023,7 +1366,7 @@ export function LandingPage() {
                     {/* Contenido en hover */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                       <div className="h-[1px] w-12 bg-[#D4AF37] mb-3" />
-                      <h3 className="font-['Playfair_Display'] font-bold text-xl text-white">
+                      <h3 className="font-['Unbounded'] font-semibold text-lg text-white uppercase tracking-tight">
                         {item.label}
                       </h3>
                     </div>
@@ -1073,7 +1416,7 @@ export function LandingPage() {
                   Contacto
                 </span>
               </div>
-              <h2 className="font-['Playfair_Display'] font-bold text-4xl lg:text-5xl text-[#0B0B0B] mb-6">
+              <h2 className="font-['Unbounded'] font-semibold text-3xl lg:text-4xl text-[#0B0B0B] mb-6 uppercase tracking-tight">
                 Conéctate Con Nosotros
               </h2>
               <p className="text-[#0B0B0B]/70 text-lg mb-8">
@@ -1113,7 +1456,7 @@ export function LandingPage() {
           <div className="grid lg:grid-cols-4 gap-12 mb-12">
             <div className="lg:col-span-2">
               <div className="mb-4">
-                <h3 className="font-['Playfair_Display'] font-bold text-2xl mb-1">
+                <h3 className="font-['Unbounded'] font-semibold text-xl mb-1 uppercase tracking-tight">
                   {APP_BRAND.name}
                 </h3>
                 <div className="flex items-center gap-2">

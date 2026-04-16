@@ -1,5 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=DM+Sans:wght@100;200;300;400;500;600;700&family=Bebas+Neue&family=Oswald:wght@200;300;400;500;600;700&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap');
 @import './tailwind.css';
+@import 'slick-carousel/slick/slick.css';
+@import './carousel.css';
 /* Premium coupon system inspired by physical gold vouchers */
 .coupon-card {
 	border: 1px solid rgba(255, 255, 255, 0.25);
@@ -76,7 +78,6 @@
 	border-top: 1px dashed;
 	background: linear-gradient(180deg, rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.62));
 }
-}
 
 .promo-voucher__dash {
 	position: absolute;
@@ -124,4 +125,19 @@
 	background-size: 11px 11px;
 	opacity: 0.14;
 	pointer-events: none;
+}
+
+.landing-minimal {
+	font-family: 'Manrope', sans-serif;
+}
+
+.landing-minimal section {
+	scroll-margin-top: 88px;
+}
+
+.landing-minimal h1,
+.landing-minimal h2,
+.landing-minimal h3 {
+	font-family: 'Unbounded', sans-serif;
+	letter-spacing: -0.01em;
 }
