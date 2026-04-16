@@ -1,9 +1,9 @@
-import image_1e4fc8c63620d97226934be919f5f40a4bfc65db from 'figma:asset/1e4fc8c63620d97226934be919f5f40a4bfc65db.png'
 import { useState, useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import {
-  Scissors, Star, Instagram, MapPin, Phone, Clock, Menu, X,
-  ArrowRight, Award, Crown, Shield, Sparkles, Calendar, Check, Zap, ChevronDown, FileDown
+  Scissors, Star, Instagram, Menu, X,
+  ArrowRight, Award, Crown, Shield, Sparkles, ChevronDown, FileDown,
+  BadgeCheck, Gem, Wand2, Trophy
 } from 'lucide-react';
 import heroSlideOne from '@/assets/1.jpg';
 import heroSlideTwo from '@/assets/2.jpg';
@@ -20,6 +20,47 @@ import {
 import { APP_BRAND } from '@/shared/config/app.constants';
 
 const HERO_SLIDES = [heroSlideOne, heroSlideTwo, heroSlideThree];
+const TEAM_SHOWCASE = [
+  {
+    src: 'https://images.pexels.com/photos/2061820/pexels-photo-2061820.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    title: 'Corte de Autor',
+    caption: 'Dominio técnico y estilo personalizado.',
+  },
+  {
+    src: 'https://images.pexels.com/photos/7697329/pexels-photo-7697329.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    title: 'Equipo en Sala',
+    caption: 'Flujo profesional en cada estación.',
+  },
+  {
+    src: 'https://images.pexels.com/photos/7697434/pexels-photo-7697434.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    title: 'Preparación Premium',
+    caption: 'Precisión desde el primer gesto.',
+  },
+  {
+    src: 'https://images.pexels.com/photos/8867540/pexels-photo-8867540.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    title: 'Ritual de Detalle',
+    caption: 'Acabados finos para una imagen impecable.',
+  },
+];
+
+const PROFESSIONAL_TICKER = [
+  { icon: BadgeCheck, label: 'Wahl', meta: 'Cordless Legend' },
+  { icon: Crown, label: 'Andis', meta: 'Fade Precision' },
+  { icon: Scissors, label: 'BabylissPRO', meta: 'Detail Work' },
+  { icon: Gem, label: 'Reuzel', meta: 'Classic Grooming' },
+  { icon: Shield, label: 'Barbicide', meta: 'Sanitation' },
+  { icon: Wand2, label: 'Suavecito', meta: 'Final Touch' },
+  { icon: Trophy, label: 'Master Class', meta: 'Technique' },
+];
+
+const PROFESSIONAL_SYSTEMS = [
+  { icon: Scissors, label: 'Clipper Over Comb', meta: 'Control' },
+  { icon: Sparkles, label: 'Hot Towel', meta: 'Ritual' },
+  { icon: Shield, label: 'Straight Razor', meta: 'Precision' },
+  { icon: Award, label: 'Skin Fade', meta: 'Blend' },
+  { icon: Crown, label: 'Beard Sculpt', meta: 'Shape' },
+  { icon: BadgeCheck, label: 'Consultation', meta: 'Fit' },
+];
 
 const SERVICES_CATALOG = [
   {
@@ -98,6 +139,9 @@ export function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
+  const [activeTeamCardSlide, setActiveTeamCardSlide] = useState(0);
+  const [teamCardProgress, setTeamCardProgress] = useState(0);
+  const [isTeamCardPaused, setIsTeamCardPaused] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
 
@@ -122,6 +166,29 @@ export function LandingPage() {
 
     return () => window.clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    if (isTeamCardPaused) {
+      return;
+    }
+
+    const intervalMs = 4200;
+    const tickMs = 60;
+    const progressStep = 100 / (intervalMs / tickMs);
+
+    const intervalId = window.setInterval(() => {
+      setTeamCardProgress((prev) => {
+        const next = prev + progressStep;
+        if (next >= 100) {
+          setActiveTeamCardSlide((curr) => (curr + 1) % TEAM_SHOWCASE.length);
+          return 0;
+        }
+        return next;
+      });
+    }, tickMs);
+
+    return () => window.clearInterval(intervalId);
+  }, [isTeamCardPaused]);
 
   const imageToDataUrl = (src: string) =>
     new Promise<string>((resolve, reject) => {
@@ -558,131 +625,185 @@ export function LandingPage() {
         </svg>
       </div>
 
-      {/* FILOSOFÍA MINIMALISTA CREATIVA */}
-      <section id="filosofía" className="relative bg-white px-4 lg:px-12 py-20 lg:py-28 overflow-hidden">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-8 lg:gap-20 items-center">
-            {/* Contenido Izquierdo - Minimalista */}
+      {/* FILOSOFÍA EDITORIAL */}
+      <section id="filosofía" className="relative bg-[linear-gradient(180deg,#FBFAF6_0%,#F3EFE6_100%)] px-4 lg:px-12 py-20 lg:py-28 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-[#D4AF37]/8 blur-3xl" />
+          <div className="absolute top-20 right-0 w-[40vw] h-[1px] bg-gradient-to-l from-[#D4AF37]/35 to-transparent" />
+          <div className="absolute bottom-24 left-0 w-[32vw] h-[1px] bg-gradient-to-r from-[#0B0B0B]/12 to-transparent" />
+        </div>
+
+        <div className="max-w-[1320px] mx-auto relative z-10">
+          <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-8 lg:gap-14 items-center">
             <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.9 }}
-              className="space-y-6 lg:space-y-8"
+              transition={{ duration: 0.7 }}
+              className="relative rounded-[2.2rem] border border-[#0B0B0B]/8 bg-white backdrop-blur-sm p-7 sm:p-9 lg:p-11 shadow-[0_24px_70px_rgba(0,0,0,0.07)] overflow-hidden"
             >
-              {/* Pequeña etiqueta */}
-              <motion.span
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="inline-block text-[#D4AF37] text-[9px] tracking-[0.6em] font-['Manrope'] font-bold uppercase"
-              >
-                1888
-              </motion.span>
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(198,168,91,0.06)_0,transparent_28%),radial-gradient(circle_at_86%_84%,rgba(11,11,11,0.045)_0,transparent_34%)]" />
+              <div className="absolute left-0 top-0 h-[2px] w-full bg-gradient-to-r from-transparent via-[#C6A85B]/45 to-transparent" />
 
-              {/* Título Ultra Bold */}
-              <motion.h2
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="font-['Unbounded'] font-black text-5xl sm:text-6xl lg:text-8xl leading-[0.9] text-[#0B0B0B] uppercase tracking-tighter"
+              <div className="flex items-center justify-between gap-4">
+                <span className="inline-flex items-center gap-2 text-[#0B0B0B]/50 text-[10px] tracking-[0.4em] font-semibold uppercase">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+                  Manifiesto {APP_BRAND.foundationLabel}
+                </span>
+                <span className="text-[10px] tracking-[0.44em] uppercase text-[#0B0B0B]/24">STUDIO NOTE</span>
+              </div>
+
+              <h2 className="relative z-10 mt-5 font-['Unbounded'] uppercase leading-[0.86] tracking-[-0.055em]">
+                <span className="block text-[#0B0B0B] text-[1.85rem] sm:text-[2.35rem] lg:text-[2.95rem]">DISEÑO</span>
+                <span className="block text-[#0B0B0B] text-[1.85rem] sm:text-[2.35rem] lg:text-[2.95rem]">DE IMAGEN</span>
+                <span className="mt-2 block text-[#C6A85B] text-[2.8rem] sm:text-[3.85rem] lg:text-[4.95rem] drop-shadow-[0_0_10px_rgba(198,168,91,0.12)]">PRECISIÓN</span>
+                <span className="mt-2 block text-[#0B0B0B]/72 text-[0.88rem] sm:text-[1rem] lg:text-[1.05rem] tracking-[0.34em]">CLEAN / MODERN / CUSTOM</span>
+              </h2>
+
+              <p className="mt-6 text-[#0B0B0B]/56 text-[13px] sm:text-sm lg:text-[15px] leading-[1.85] max-w-lg">
+                Cortes limpios, precisos y hechos a medida.
+              </p>
+
+              <div className="mt-8 grid sm:grid-cols-2 gap-3">
+                <div className="rounded-full border border-[#C6A85B]/45 bg-[#FAF8F4] px-5 py-3 transition-all duration-300 hover:bg-[#C6A85B] hover:-translate-y-0.5 group shadow-[0_8px_24px_rgba(0,0,0,0.03)]">
+                  <p className="text-[10px] tracking-[0.44em] uppercase text-[#0B0B0B]/45 group-hover:text-[#0B0B0B]">Método</p>
+                  <p className="mt-1 text-[13px] lg:text-[14px] text-[#0B0B0B]/86 font-semibold group-hover:text-[#0B0B0B]">Diagnóstico + acabado</p>
+                </div>
+                <div className="rounded-full border border-[#C6A85B]/45 bg-[#FAF8F4] px-5 py-3 transition-all duration-300 hover:bg-[#C6A85B] hover:-translate-y-0.5 group shadow-[0_8px_24px_rgba(0,0,0,0.03)]">
+                  <p className="text-[10px] tracking-[0.44em] uppercase text-[#0B0B0B]/45 group-hover:text-[#0B0B0B]">Estándar</p>
+                  <p className="mt-1 text-[13px] lg:text-[14px] text-[#0B0B0B]/86 font-semibold group-hover:text-[#0B0B0B]">Detalle total</p>
+                </div>
+              </div>
+
+              <motion.a
+                href="#servicios"
+                whileHover={{ x: 8 }}
+                className="mt-10 inline-flex items-center gap-3 text-[11px] tracking-[0.34em] uppercase font-bold text-[#0B0B0B]"
               >
-                Barberos<br />
+                Ver catálogo completo
                 <motion.span
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.4 }}
-                  className="text-[#D4AF37]"
+                  animate={{ x: [0, 3, 0] }}
+                  transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  No<br />Peluqueros
+                  <ArrowRight className="w-4 h-4 text-[#B9922E]" />
                 </motion.span>
-              </motion.h2>
-
-              {/* Descripción Minimalista */}
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: 0.5 }}
-                className="text-base lg:text-lg text-[#0B0B0B]/60 leading-relaxed font-['Manrope'] max-w-md"
-              >
-                Dominamos el arte ancestral de la navaja, el corte milimétrico y la precisión artesanal. Cada barba es un masterpiece.
-              </motion.p>
-
-              {/* CTA Simple */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: 0.6 }}
-              >
-                <motion.a
-                  href="#servicios"
-                  whileHover={{ x: 8 }}
-                  className="inline-flex items-center gap-3 text-sm tracking-wider uppercase font-bold text-[#0B0B0B] group"
-                >
-                  Ver Catálogo Completo
-                  <motion.div
-                    initial={{ x: 0 }}
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <ArrowRight className="w-5 h-5" />
-                  </motion.div>
-                </motion.a>
-              </motion.div>
+              </motion.a>
             </motion.div>
 
-            {/* Imagen PNG - Limpia sin fondos */}
             <motion.div
-              initial={{ opacity: 0, x: 40 }}
+              initial={{ opacity: 0, x: 36 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.9, delay: 0.3 }}
-              className="relative flex items-center justify-center"
+              transition={{ duration: 0.8, delay: 0.15 }}
+              className="relative"
             >
-              {/* Decoración minimalista detrás */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-[#D4AF37]/8 blur-3xl"
-              />
-              
-              {/* Imagen limpia */}
-              <motion.img
-                src={image_1e4fc8c63620d97226934be919f5f40a4bfc65db}
-                alt="Navaja Artesanal"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.9, delay: 0.3 }}
-                className="relative z-10 w-full max-w-md h-auto drop-shadow-[0_40px_80px_rgba(0,0,0,0.15)]"
-              />
-              
-              {/* Línea decorativa lateral */}
-              <motion.div
-                initial={{ scaleY: 0 }}
-                whileInView={{ scaleY: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                className="absolute -left-12 top-1/2 -translate-y-1/2 w-1 h-40 bg-gradient-to-b from-transparent via-[#D4AF37] to-transparent origin-center"
-              />
+              <div
+                className="relative rounded-[2rem] bg-[#0E0D0B] p-5 sm:p-6 lg:p-7 shadow-[0_18px_58px_rgba(0,0,0,0.22)] overflow-hidden border border-white/5"
+                onMouseEnter={() => setIsTeamCardPaused(true)}
+                onMouseLeave={() => setIsTeamCardPaused(false)}
+              >
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.03),transparent_26%,transparent_72%,rgba(198,168,91,0.06)),radial-gradient(circle_at_72%_12%,rgba(198,168,91,0.12),transparent_20%)]" />
+                <div className="absolute top-0 right-0 w-52 h-52 bg-[#D4AF37]/8 blur-3xl" />
+                <div className="absolute left-6 top-6 text-white/45 text-[10px] tracking-[0.42em] uppercase font-semibold">Nuestro Equipo</div>
+
+                <div className="mt-9 relative h-[330px] sm:h-[390px] lg:h-[450px] rounded-[1.5rem] overflow-hidden">
+                  {TEAM_SHOWCASE.map((slide, index) => (
+                    <motion.img
+                      key={`${slide}-${index}`}
+                      src={slide.src}
+                      alt="Equipo de barbería en sesión"
+                      initial={false}
+                      animate={{
+                        opacity: index === activeTeamCardSlide ? 1 : 0,
+                        scale: index === activeTeamCardSlide ? 1 : 1.06,
+                        y: index === activeTeamCardSlide ? 0 : -6,
+                      }}
+                      transition={{
+                        opacity: { duration: 0.85, ease: 'easeInOut' },
+                        scale: { duration: 2.4, ease: 'easeOut' },
+                        y: { duration: 0.9, ease: 'easeOut' },
+                      }}
+                      className="absolute inset-0 w-full h-full object-cover object-center"
+                    />
+                  ))}
+
+                  <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.82),rgba(0,0,0,0.18)_34%,rgba(0,0,0,0.0)_70%)]" />
+                  <div className="absolute inset-5 border border-white/10 rounded-[1.15rem] pointer-events-none" />
+
+                  <div className="absolute left-5 bottom-5 pr-4 max-w-[72%]">
+                    <p className="text-white text-sm sm:text-base font-semibold tracking-[0.32em] uppercase">
+                      {TEAM_SHOWCASE[activeTeamCardSlide].title}
+                    </p>
+                    <p className="text-white/68 text-[11px] tracking-[0.28em] uppercase mt-2">
+                      {TEAM_SHOWCASE[activeTeamCardSlide].caption}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-4 md:grid-cols-[1fr_auto] md:items-end text-white/90">
+                  <div>
+                    <p className="text-[11px] tracking-[0.32em] uppercase">Barbero + cliente</p>
+                    <p className="mt-1 text-[10px] tracking-[0.28em] uppercase text-white/58">Precisión en tiempo real</p>
+                  </div>
+                  <div className="text-right text-[10px] tracking-[0.34em] uppercase text-white/50">
+                    Team / Studio / Ritual
+                  </div>
+                </div>
+
+                <div className="mt-5 flex flex-wrap items-center gap-3 text-[11px] tracking-[0.2em] uppercase text-white/82">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-2 bg-white/5">
+                    <span className="text-[#D4AF37] font-bold drop-shadow-[0_0_8px_rgba(212,175,55,0.18)]">4.9 ★</span>
+                    <span className="text-white/38">•</span>
+                    <span>Top</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-2 bg-white/5">
+                    <span className="text-[#D4AF37] font-bold drop-shadow-[0_0_8px_rgba(212,175,55,0.18)]">100%</span>
+                    <span className="text-white/38">•</span>
+                    <span>Fino</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-2 bg-white/5">
+                    <span className="text-[#D4AF37] font-bold drop-shadow-[0_0_8px_rgba(212,175,55,0.18)]">135</span>
+                    <span className="text-white/38">•</span>
+                    <span>Legacy</span>
+                  </span>
+                </div>
+
+                <div className="mt-5 space-y-2">
+                  <div className="h-[2px] w-full bg-white/10 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-[#D4AF37]"
+                      style={{ width: `${teamCardProgress}%` }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-center gap-2 pt-1">
+                    {TEAM_SHOWCASE.map((_, index) => (
+                      <button
+                        type="button"
+                        aria-label={`Ir a foto ${index + 1}`}
+                        onClick={() => {
+                          setActiveTeamCardSlide(index);
+                          setTeamCardProgress(0);
+                        }}
+                        onFocus={() => setIsTeamCardPaused(true)}
+                        onBlur={() => setIsTeamCardPaused(false)}
+                        key={index}
+                        className={`h-1 rounded-full transition-all duration-300 ${
+                          index === activeTeamCardSlide ? 'w-7 bg-[#D4AF37]' : 'w-2 bg-white/20 hover:bg-white/40'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-2 flex items-center justify-end">
+                  <span className="text-[10px] tracking-[0.16em] uppercase text-white/45">
+                    {String(activeTeamCardSlide + 1).padStart(2, '0')} / {String(TEAM_SHOWCASE.length).padStart(2, '0')}
+                  </span>
+                </div>
+              </div>
             </motion.div>
           </div>
-
-          {/* Línea decorativa inferior */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="mt-16 lg:mt-20 h-[1px] w-32 bg-gradient-to-r from-[#D4AF37] to-transparent origin-left"
-          />
         </div>
       </section>
 
@@ -710,34 +831,86 @@ export function LandingPage() {
       </div>
 
       {/* SECCIÓN DIFERENCIADORA */}
-      <section className="relative bg-[#0B0B0B] py-12 lg:py-16 px-4 lg:px-8">
-        <div className="max-w-[1200px] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="grid lg:grid-cols-3 gap-8"
-          >
-            {/* Por Qué Nosotros */}
-            <div className="border border-[#D4AF37]/30 rounded-lg p-8 hover:border-[#D4AF37]/70 transition-colors">
-              <h3 className="font-['Unbounded'] font-bold text-xl text-[#D4AF37] mb-3 uppercase tracking-tight">Experiencia</h3>
-              <p className="text-white/60 text-sm leading-relaxed">
-                135 años de dominio en el arte ancestral de la barbería. Maestría en cada corte.
-              </p>
+      <section className="relative bg-[#0B0B0B] py-10 lg:py-14 px-4 lg:px-8 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04),transparent_45%)]" />
+        <div className="max-w-[1360px] mx-auto relative z-10 space-y-4">
+          <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+            <span className="text-white/45 text-[10px] tracking-[0.4em] uppercase font-semibold">ATELIER SYSTEM</span>
+            <span className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">PROFESSIONAL ONLY</span>
+          </div>
+
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.02]">
+            <motion.div
+              className="flex w-max items-center gap-3 py-4 px-4"
+              animate={{ x: ['0%', '-50%'] }}
+              transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
+            >
+              {PROFESSIONAL_TICKER.concat(PROFESSIONAL_TICKER).map((item, index) => {
+                const Icon = item.icon;
+
+                return (
+                  <div
+                    key={`${item.label}-${index}`}
+                    className="group flex items-center gap-3 rounded-full border border-[#D4AF37]/20 bg-[#0F0F0F] px-4 py-2.5 whitespace-nowrap shadow-[0_8px_24px_rgba(0,0,0,0.18)]"
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/10 text-[#D4AF37]">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="leading-none">
+                      <p className="text-white text-[11px] tracking-[0.2em] uppercase font-semibold">{item.label}</p>
+                      <p className="mt-1 text-white/45 text-[9px] tracking-[0.28em] uppercase">{item.meta}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </motion.div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.02]">
+            <motion.div
+              className="flex w-max items-center gap-3 py-4 px-4"
+              animate={{ x: ['-50%', '0%'] }}
+              transition={{ duration: 34, repeat: Infinity, ease: 'linear' }}
+            >
+              {PROFESSIONAL_SYSTEMS.concat(PROFESSIONAL_SYSTEMS).map((item, index) => {
+                const Icon = item.icon;
+
+                return (
+                  <div
+                    key={`${item.label}-${index}`}
+                    className="flex items-center gap-3 rounded-full border border-white/8 bg-[#0C0C0C] px-4 py-2.5 whitespace-nowrap"
+                  >
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#D4AF37]/12 text-[#D4AF37]">
+                      <Icon className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="leading-none">
+                      <p className="text-white text-[10px] tracking-[0.26em] uppercase font-semibold">{item.label}</p>
+                      <p className="mt-1 text-white/40 text-[9px] tracking-[0.3em] uppercase">{item.meta}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </motion.div>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+              <p className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">135 años</p>
+              <p className="mt-2 text-white/58 text-[11px] tracking-[0.22em] uppercase">Legacy</p>
             </div>
-            <div className="border border-[#D4AF37]/30 rounded-lg p-8 hover:border-[#D4AF37]/70 transition-colors">
-              <h3 className="font-['Unbounded'] font-bold text-xl text-[#D4AF37] mb-3 uppercase tracking-tight">Calidad Premium</h3>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Productos importados y técnicas de competencia mundial. Precisión milimétrica garantizada.
-              </p>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+              <p className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">Tools</p>
+              <p className="mt-2 text-white/58 text-[11px] tracking-[0.22em] uppercase">Selected</p>
             </div>
-            <div className="border border-[#D4AF37]/30 rounded-lg p-8 hover:border-[#D4AF37]/70 transition-colors">
-              <h3 className="font-['Unbounded'] font-bold text-xl text-[#D4AF37] mb-3 uppercase tracking-tight">Satisfacción 100%</h3>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Si no quedas satisfecho, lo remediamos sin costo. Tu confianza es nuestro compromiso.
-              </p>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+              <p className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">Ritual</p>
+              <p className="mt-2 text-white/58 text-[11px] tracking-[0.22em] uppercase">Service</p>
             </div>
-          </motion.div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+              <p className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">100% exact</p>
+              <p className="mt-2 text-white/58 text-[11px] tracking-[0.22em] uppercase">Standard</p>
+            </div>
+          </div>
         </div>
       </section>
 
