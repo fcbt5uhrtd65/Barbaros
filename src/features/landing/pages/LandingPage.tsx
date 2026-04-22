@@ -996,12 +996,12 @@ export function LandingPage() {
                         </h3>
                         {service.featured && (
                           <span className="bg-[#D4AF37] text-[#0B0B0B] px-3 py-1 text-[8px] tracking-wider uppercase font-bold">
-                            ⭐ Recomendado
+                             Recomendado
                           </span>
                         )}
                         {service.bestseller && (
                           <span className="bg-[#D4AF37] text-[#0B0B0B] px-3 py-1 text-[8px] tracking-wider uppercase font-bold">
-                            🏆 Top Ventas
+                             Top Ventas
                           </span>
                         )}
                       </div>
@@ -1064,6 +1064,689 @@ export function LandingPage() {
               d="M0,65 L180,50 L380,60 L600,45 L820,55 L1050,50 L1260,60 L1440,55 L1440,100 L0,100 Z"
               fill="white"
               opacity="0.05"
+            />
+          </svg>
+        </div>
+      </section>
+
+      {/* SECCIÓN INFANTIL - EXPERIENCIA PREMIUM ARQUITECTÓNICA */}
+      <section id="infantil" className="relative bg-gradient-to-br from-[#0A0A0F] via-[#1a1a24] to-[#0A0A0F] py-40 lg:py-52 px-4 lg:px-8 overflow-hidden">
+        {/* Fondo dinámico mejorado */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Gradiente base radial con más dinamismo */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(255,193,7,0.15),transparent_50%),radial-gradient(ellipse_at_80%_20%,rgba(0,206,209,0.1),transparent_50%),radial-gradient(ellipse_at_50%_100%,rgba(255,105,180,0.08),transparent_60%)]" />
+          
+          <motion.div
+            animate={{ 
+              y: [0, -120, 0],
+              x: [0, 60, 0],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-40 left-1/3 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-[#FFD700]/12 to-transparent blur-3xl"
+          />
+          <motion.div
+            animate={{ 
+              y: [0, 100, 0],
+              x: [0, -70, 0],
+              scale: [1, 1.15, 1]
+            }}
+            transition={{ duration: 28, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute -bottom-40 right-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-tl from-[#00CED1]/12 to-transparent blur-3xl"
+          />
+        </div>
+
+        <div className="max-w-[1600px] mx-auto relative z-10">
+          {/* HEADER PRINCIPAL - DISEÑO CREATIVO CON TÍTULO ROTADO */}
+          <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-20 mb-40">
+            {/* PEQUEÑOS - ROTADO 90 GRADOS */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="hidden lg:flex items-center relative h-64"
+            >
+              <div
+                className="text-9xl font-['Unbounded'] font-black text-white uppercase"
+                style={{
+                  writingMode: 'vertical-rl',
+                  textOrientation: 'mixed',
+                  transform: 'rotate(180deg)',
+                  letterSpacing: '-0.05em'
+                }}
+              >
+                Pequeños
+              </div>
+              <div className="absolute right-full mr-4 h-full w-1 bg-gradient-to-b from-[#FFD700] via-[#FF1493] to-transparent rounded-full" />
+            </motion.div>
+
+            {/* BARBAROS - DIVIDIDO Y GRAN ESCALA */}
+            <motion.div
+              initial={{ opacity: 0, y: -40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.9 }}
+              className="flex-1"
+            >
+              <div className="mb-12">
+                <h1 className="text-7xl lg:text-9xl font-['Unbounded'] font-black text-white uppercase tracking-tighter leading-[0.95]">
+                  <span className="block">Bar</span>
+                  <span className="bg-gradient-to-r from-[#FFD700] via-[#FF1493] to-[#00CED1] bg-clip-text text-transparent">baros</span>
+                </h1>
+              </div>
+
+              {/* SUBTÍTULO */}
+              <p className="text-base lg:text-lg text-white/70 font-['DM_Sans'] mb-10 max-w-lg leading-relaxed">
+                Experiencias que transforman momentos simples en aventuras inolvidables. Donde cada niño descubre su maestría interior.
+              </p>
+
+              {/* BOTÓN RESERVAR */}
+              <motion.a
+                href="https://wa.me/573001234567"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, x: 8 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FF1493] text-black font-['Unbounded'] font-black text-base uppercase tracking-widest rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300"
+              >
+                Reservar
+                <ArrowRight className="w-6 h-6" />
+              </motion.a>
+            </motion.div>
+
+            {/* COLUMNA DERECHA - GRID VISUAL DE CARDS */}
+            <motion.div
+              initial={{ opacity: 0, x: 60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.9, delay: 0.2 }}
+              className="relative"
+            >
+              {/* Grid creativo de 4 cards en disposición asimétrica */}
+              <div className="grid grid-cols-2 gap-4 lg:gap-6">
+                {/* Card Grande Superior Izquierda - NIÑO1 */}
+                <div className="lg:col-span-1 lg:row-span-2">
+                  <motion.div
+                    whileHover={{ scale: 1.08, rotateY: 5 }}
+                    className="group h-full rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 cursor-pointer relative"
+                  >
+                    <img 
+                      src="/src/assets/NIÑO1.jpg"
+                      alt="Discoverer"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent opacity-80" />
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileHover={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-[#0A0A0F]/95 to-transparent"
+                    >
+                      <h3 className="text-2xl font-['Unbounded'] font-black text-white mb-2">Discoverer</h3>
+                      <p className="text-xs text-white/70">El Pequeño Explorador • 4-6 años</p>
+                    </motion.div>
+                    <div className="absolute top-4 right-4 text-3xl opacity-90 group-hover:scale-0 group-hover:opacity-0 transition-all duration-300">
+                      
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* Card Pequeña Superior Derecha - NIÑO2 */}
+                <motion.div
+                  whileHover={{ scale: 1.08 }}
+                  className="group rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 cursor-pointer relative h-48 lg:h-auto"
+                >
+                  <img 
+                    src="/src/assets/NIÑO2.jpg"
+                    alt="Creative"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent opacity-80" />
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    whileHover={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#0A0A0F]/95 to-transparent"
+                  >
+                    <h3 className="text-lg font-['Unbounded'] font-black text-white mb-1">Creative</h3>
+                    <p className="text-[10px] text-white/70">Artista Joven • 6-8 años</p>
+                  </motion.div>
+                  <div className="absolute top-3 right-3 text-2xl opacity-90 group-hover:scale-0 group-hover:opacity-0 transition-all duration-300">
+                    
+                  </div>
+                </motion.div>
+
+                {/* Card Pequeña Inferior Derecha - NIÑO3 */}
+                <motion.div
+                  whileHover={{ scale: 1.08 }}
+                  className="group rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 cursor-pointer relative h-48 lg:h-auto"
+                >
+                  <img 
+                    src="/src/assets/NIÑO3.jpg"
+                    alt="Navigator"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent opacity-80" />
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    whileHover={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#0A0A0F]/95 to-transparent"
+                  >
+                    <h3 className="text-lg font-['Unbounded'] font-black text-white mb-1">Navigator</h3>
+                    <p className="text-[10px] text-white/70">El Navegante • 8-10 años</p>
+                  </motion.div>
+                  <div className="absolute top-3 right-3 text-2xl opacity-90 group-hover:scale-0 group-hover:opacity-0 transition-all duration-300">
+                    
+                  </div>
+                </motion.div>
+
+                {/* Badge Especial Flotante */}
+                <motion.div
+                  animate={{ y: [0, -15, 0] }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                  className="col-span-2 lg:col-span-1 rounded-3xl bg-gradient-to-br from-[#FFD700]/20 to-[#FF1493]/20 backdrop-blur-xl border border-white/30 p-6 flex flex-col items-center justify-center text-center h-48"
+                >
+                  <div className="text-4xl mb-3">👑</div>
+                  <h3 className="text-xl font-['Unbounded'] font-black text-white mb-2 uppercase">El Maestro</h3>
+                  <p className="text-xs text-white/70 mb-3">Experiencia Premium • 14+ años</p>
+                  <div className="text-[10px] text-white/50 uppercase tracking-widest">
+                    A consultar
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* LAS 5 EXPERIENCIAS CREATIVAS */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-40 bg-gradient-to-r from-white/[0.08] to-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/20 p-12 lg:p-16"
+          >
+            <h2 className="text-4xl font-['Unbounded'] font-black text-white uppercase mb-16 text-center tracking-tight">
+              5 Niveles de Transformación
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+              {[
+                { 
+                  level: '1',
+                  name: 'Discoverer',
+                  age: '4-6',
+                  price: '12k',
+                  time: '30m',
+                  description: 'Tu primer corte',
+                  features: ['Técnica suave', 'Fotos gratis'],
+                  color: 'from-[#FFD700] to-[#FFA500]'
+                },
+                { 
+                  level: '2',
+                  name: 'Creative',
+                  age: '6-8',
+                  price: '15k',
+                  time: '35m',
+                  description: 'Diseños únicos',
+                  features: ['Personalizado', 'Música en vivo'],
+                  color: 'from-[#FF1493] to-[#FF69B4]'
+                },
+                { 
+                  level: '3',
+                  name: 'Navigator',
+                  age: '8-10',
+                  price: '18k',
+                  time: '40m',
+                  description: 'Cortes modernos',
+                  features: ['Líneas precisas', 'Producto premium'],
+                  color: 'from-[#00CED1] to-[#00BFFF]'
+                },
+                { 
+                  level: '4',
+                  name: 'Vision',
+                  age: '10-12',
+                  price: '22k',
+                  time: '45m',
+                  description: 'Innovador total',
+                  features: ['Concepto 3D', 'Fotos profesionales'],
+                  color: 'from-[#A855F7] to-[#EC4899]'
+                },
+                { 
+                  level: '5',
+                  name: 'Organic Master',
+                  age: '12+',
+                  price: 'Premium',
+                  time: '55m',
+                  description: 'Experiencia máxima',
+                  features: ['100% personalizado', 'Spa incluido'],
+                  color: 'from-[#FFD700] to-[#FF1493]'
+                }
+              ].map((exp, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.08 }}
+                  whileHover={{ scale: 1.08, y: -10 }}
+                  className="group rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 overflow-hidden cursor-pointer relative"
+                >
+                  <div className={`h-1 bg-gradient-to-r ${exp.color}`} />
+                  <div className="p-6">
+                    <div className={`inline-block px-3 py-1 rounded-full bg-gradient-to-r ${exp.color} text-black text-xs font-bold mb-3`}>
+                      Nivel {exp.level}
+                    </div>
+                    <h3 className="text-xl font-['Unbounded'] font-black text-white uppercase mb-1 tracking-tight">
+                      {exp.name}
+                    </h3>
+                    <p className="text-[11px] text-white/50 uppercase mb-3 tracking-wider">
+                      {exp.age} años
+                    </p>
+                    <p className="text-sm text-white/70 mb-4 font-['DM_Sans'] italic">
+                      "{exp.description}"
+                    </p>
+                    <div className="space-y-2 mb-6">
+                      {exp.features.map((feature, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-white/60">
+                          <span className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${exp.color}`} />
+                          {feature}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="border-t border-white/10 pt-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-[9px] text-white/40 uppercase mb-1">Desde</p>
+                          <p className="text-lg font-['Unbounded'] font-black text-white">{exp.price}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[9px] text-white/40 uppercase mb-1">Duración</p>
+                          <p className="font-bold text-white/70">{exp.time}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl pointer-events-none"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          
+
+         
+        </div>
+
+        {/* Wave dinámico */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none">
+          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-full">
+            <defs>
+              <filter id="wave-final" x="-50%" y="-50%" width="200%" height="200%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.03 0.025" numOctaves="4" seed="88" />
+                <feDisplacementMap in="SourceGraphic" scale="45" />
+              </filter>
+            </defs>
+            <path
+              d="M0,60 Q90,20 180,60 T360,60 T540,60 T720,60 T900,60 T1080,60 T1260,60 T1440,60 L1440,120 L0,120 Z"
+              fill="white"
+              filter="url(#wave-final)"
+              opacity="0.08"
+            />
+          </svg>
+        </div>
+      </section>
+
+      {/* PROMOCIONES POR DÍA */}
+      <section id="membresías" className="relative bg-white py-14 lg:py-20 px-4 lg:px-8 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-24 -right-10 w-80 h-80 rounded-full bg-[#D4AF37]/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-10 w-72 h-72 rounded-full bg-[#0B0B0B]/6 blur-3xl" />
+        </div>
+        <div className="max-w-[1280px] mx-auto">
+          {/* Header */}
+          <div className="text-center mb-16">
+            {[
+              {
+                id: 1,
+                title: 'El Joven Aventurero',
+                subtitle: 'Discoverer Class',
+                description: 'Corte clásico con transiciones suaves y líneas que cuentan historias de exploración sin límites',
+                details: ['4-7 años', 'Técnica Suave', 'Experiencia Interactiva'],
+                price: '15k',
+                time: '35 min',
+                color1: '#4A90E2',
+                color2: '#7ED3FC',
+                icon: '🗺️'
+              },
+              {
+                id: 2,
+                title: 'El Rockstar Elegante',
+                subtitle: 'Creative Class',
+                description: 'Fade moderno con diseños geométricos que reflejan la personalidad única de cada pequeño',
+                details: ['7-12 años', 'Fade Sofisticado', 'Diseño Personalizado'],
+                price: '18k',
+                time: '40 min',
+                color1: '#A855F7',
+                color2: '#EC4899',
+                icon: '🎸'
+              },
+              {
+                id: 3,
+                title: 'El Explorador Extremo',
+                subtitle: 'Adventure Class',
+                description: 'Cortes dinámicos con acabados profesionales para el aventurero que busca algo diferente',
+                details: ['5-10 años', 'Diseño Único', 'Acabado Premium'],
+                price: '20k',
+                time: '45 min',
+                color1: '#10B981',
+                color2: '#34D399',
+                icon: '🧗'
+              },
+              {
+                id: 4,
+                title: 'El Príncipe Moderno',
+                subtitle: 'Premium Class',
+                description: 'Experiencia de lujo donde cada detalle es perfección, cada gesto es elegancia refinada',
+                details: ['8-14 años', 'Experiencia VIP', 'Ritual Completo'],
+                price: '24k',
+                time: '50 min',
+                color1: '#F59E0B',
+                color2: '#FCD34D',
+                icon: '👑'
+              },
+              {
+                id: 5,
+                title: 'El Naturalista',
+                subtitle: 'Organic Class',
+                description: 'Cortes naturales que respetan la textura del cabello y la creatividad del niño',
+                details: ['6-11 años', 'Técnica Natural', 'Sin Presión'],
+                price: '16k',
+                time: '38 min',
+                color1: '#059669',
+                color2: '#6EE7B7',
+                icon: '🌿'
+              },
+              {
+                id: 6,
+                title: 'El Futurista Visionario',
+                subtitle: 'Vision Class',
+                description: 'Diseños innovadores que desafían lo convencional con técnicas de vanguardia',
+                details: ['7-13 años', 'Diseño Futurista', 'Innovación Pura'],
+                price: '26k',
+                time: '55 min',
+                color1: '#0EA5E9',
+                color2: '#06B6D4',
+                icon: '🚀'
+              },
+            ].map((card, idx) => (
+              <motion.div
+                key={card.id}
+                initial={{ opacity: 0, y: 60, rotateX: -20 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: idx * 0.12 }}
+                className="group relative h-full"
+                style={{ perspective: '1200px' }}
+              >
+                {/* Glow Background */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-white/5 to-white/0 rounded-2xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-20" />
+
+                {/* Card Principal con Glassmorphism */}
+                <motion.div
+                  whileHover={{ y: -8, rotateX: 5, rotateY: 3 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="relative h-full rounded-2xl overflow-hidden backdrop-blur-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] shadow-2xl"
+                  style={{
+                    background: `linear-gradient(135deg, rgba(${parseInt(card.color1.slice(1, 3), 16)}, ${parseInt(card.color1.slice(3, 5), 16)}, ${parseInt(card.color1.slice(5, 7), 16)}, 0.08), rgba(${parseInt(card.color2.slice(1, 3), 16)}, ${parseInt(card.color2.slice(3, 5), 16)}, ${parseInt(card.color2.slice(5, 7), 16)}, 0.04))`,
+                    backdropFilter: 'blur(20px)'
+                  }}
+                >
+                  {/* Efecto de luz diagonal */}
+                  <motion.div
+                    className="absolute -inset-full bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                  />
+
+                  {/* Border de gradiente animado */}
+                  <div className="absolute inset-0 rounded-2xl border border-transparent bg-gradient-to-r from-[#FFD700]/0 via-[#FF1493]/20 to-[#00CED1]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="relative z-10 p-6 lg:p-8 h-full flex flex-col">
+                    {/* Header */}
+                    <div className="mb-8">
+                      {/* Icon con animación */}
+                      <motion.div
+                        animate={{ 
+                          y: [0, -12, 0],
+                          scale: [1, 1.1, 1]
+                        }}
+                        transition={{ duration: 4, repeat: Infinity, delay: idx * 0.3 }}
+                        className="text-5xl mb-4 inline-block"
+                      >
+                        {card.icon}
+                      </motion.div>
+
+                      {/* Tag de clase */}
+                      <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <div 
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: card.color1 }}
+                        />
+                        <span className="text-xs font-bold text-white/70 uppercase tracking-wider">
+                          {card.subtitle}
+                        </span>
+                      </div>
+
+                      <h3 className="text-2xl lg:text-3xl font-['Unbounded'] font-black uppercase tracking-tighter text-white mb-2">
+                        {card.title}
+                      </h3>
+
+                      {/* Línea decorativa */}
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: 40 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: idx * 0.12 + 0.3 }}
+                        className="h-0.5 rounded-full"
+                        style={{
+                          background: `linear-gradient(90deg, ${card.color1}, ${card.color2})`
+                        }}
+                      />
+                    </div>
+
+                    {/* Descripción */}
+                    <p className="text-sm lg:text-base text-white/60 leading-relaxed mb-6 flex-grow">
+                      {card.description}
+                    </p>
+
+                    {/* Detalles */}
+                    <div className="mb-6 space-y-2">
+                      {card.details.map((detail, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: idx * 0.12 + i * 0.1 }}
+                          className="flex items-center gap-2 text-sm text-white/50"
+                        >
+                          <div 
+                            className="w-1.5 h-1.5 rounded-full"
+                            style={{ backgroundColor: card.color1 }}
+                          />
+                          {detail}
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Footer con precio y time */}
+                    <div className="border-t border-white/10 pt-6">
+                      <div className="flex justify-between items-end mb-4">
+                        <div>
+                          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Precio</p>
+                          <p className="text-2xl lg:text-3xl font-['Unbounded'] font-black text-white">
+                            ${card.price}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Duración</p>
+                          <p className="text-lg font-bold text-white/80">{card.time}</p>
+                        </div>
+                      </div>
+
+                      {/* CTA Button con efecto sofisticado */}
+                      <motion.a
+                        href="https://wa.me/573001234567"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full py-3 px-4 rounded-xl font-bold text-sm text-[#0F0F15] uppercase tracking-wider transition-all duration-300 overflow-hidden relative group/btn"
+                        style={{
+                          background: `linear-gradient(135deg, ${card.color1}, ${card.color2})`,
+                          boxShadow: `0 8px 32px ${card.color1}40`
+                        }}
+                      >
+                        <span className="relative z-10 flex items-center justify-center gap-2">
+                          Reservar
+                          <ArrowRight className="w-4 h-4" />
+                        </span>
+                        <motion.div
+                          className="absolute inset-0 bg-white/20"
+                          initial={{ x: '-100%' }}
+                          whileHover={{ x: '100%' }}
+                          transition={{ duration: 0.5 }}
+                        />
+                      </motion.a>
+                    </div>
+                  </div>
+
+                  {/* Partículas flotantes dentro del card */}
+                  {[...Array(3)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      animate={{
+                        y: [-20, 200],
+                        opacity: [0, 0.5, 0],
+                        x: [0, (i - 1) * 20]
+                      }}
+                      transition={{
+                        duration: 3 + i,
+                        repeat: Infinity,
+                        delay: i * 0.5
+                      }}
+                      className="absolute w-1 h-1 rounded-full pointer-events-none"
+                      style={{
+                        backgroundColor: card.color1,
+                        left: `${30 + i * 20}%`,
+                        top: '-10px'
+                      }}
+                    />
+                  ))}
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Sección de Características Avanzadas */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20"
+          >
+            {[
+              {
+                title: 'Ambientación Inmersiva',
+                description: 'Espacios diseñados para estimular la imaginación con música, luces y decoración temática',
+                icon: '🎬'
+              },
+              {
+                title: 'Barberos Especializados',
+                description: 'Personal entrenado en técnicas gentiles y en la psicología infantil con paciencia infinita',
+                icon: '✨'
+              },
+              {
+                title: 'Experiencia Memorable',
+                description: 'Cada niño recibe un certificado personalizado y fotos profesionales de su aventura',
+                icon: '📸'
+              }
+            ].map((feature, idx) => (
+              <motion.div
+                key={idx}
+                whileHover={{ y: -4 }}
+                className="rounded-xl backdrop-blur-xl border border-white/10 bg-white/[0.03] p-6 lg:p-8"
+              >
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h4 className="text-lg font-['Unbounded'] font-bold text-white mb-2 uppercase">
+                  {feature.title}
+                </h4>
+                <p className="text-sm text-white/60">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* CTA Final con efecto premium */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="mt-24 relative"
+          >
+            {/* Background effects */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-[#FFD700]/20 via-[#FF1493]/20 to-[#00CED1]/20 blur-3xl opacity-60 -z-10" />
+            
+            <div className="rounded-2xl backdrop-blur-2xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 p-12 lg:p-16 text-center">
+              <h3 className="text-3xl lg:text-5xl font-['Unbounded'] font-black text-white uppercase mb-4 tracking-tighter">
+                Crea Magia en Cada Corte
+              </h3>
+              <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
+                Cada niño merece una experiencia que trascienda un simple corte. En BÁRBAROS, transformamos momentos en recuerdos eternos
+              </p>
+              
+              <motion.a
+                href="https://wa.me/573001234567"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.08, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-[#FFD700] via-[#FF1493] to-[#00CED1] text-[#0F0F15] font-['Unbounded'] font-black text-base uppercase tracking-wider rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300"
+              >
+                Reservar Experiencia Infantil
+                <ArrowRight className="w-5 h-5" />
+              </motion.a>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Wave Decorativo */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none">
+          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-full">
+            <defs>
+              <filter id="wave-complex" x="-50%" y="-50%" width="200%" height="200%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.028 0.025" numOctaves="4" seed="99" />
+                <feDisplacementMap in="SourceGraphic" scale="40" />
+              </filter>
+            </defs>
+            <path
+              d="M0,50 Q120,20 240,50 T480,50 T720,50 T960,50 T1200,50 T1440,50 L1440,120 L0,120 Z"
+              fill="white"
+              filter="url(#wave-complex)"
+              opacity="0.08"
+            />
+            <path
+              d="M0,60 Q150,40 300,60 T600,60 T900,60 T1200,60 T1440,60 L1440,120 L0,120 Z"
+              fill="white"
+              opacity="0.04"
             />
           </svg>
         </div>
