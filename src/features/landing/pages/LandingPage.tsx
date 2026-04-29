@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'motion/react';
 import {
   Scissors, Star, Instagram, Menu, X,
   ArrowRight, Award, Crown, Shield, Sparkles, ChevronDown, FileDown,
@@ -20,6 +20,79 @@ import {
 import { APP_BRAND } from '@/shared/config/app.constants';
 
 const HERO_SLIDES = [heroSlideOne, heroSlideTwo, heroSlideThree];
+
+const PROMOS = [
+  {
+    day: "Lunes",
+    title: "Power Monday",
+    subtitle: "Corte + Barba con precisión de estudio.",
+    price: "$45k",
+    original: "$60k",
+    theme: "bg-[#0B0B0B] text-white border border-[#D4AF37]/20",
+    position: "left-0 top-1/2 -translate-y-1/2 z-30",
+    width: 400,
+    rotate: -1,
+    float: -6,
+    duration: 6,
+    featured: true,
+  },
+  {
+    day: "Martes",
+    title: "Navaja Ritual",
+    subtitle: "Afeitado clásico con toalla caliente.",
+    price: "$28k",
+    original: "$40k",
+    theme: "bg-[#111] text-white",
+    position: "top-[20px] left-[300px] z-20",
+    width: 270,
+    rotate: -4,
+    float: -10,
+    duration: 7,
+    featured: false,
+  },
+  {
+    day: "Miércoles",
+    title: "Fade Precision",
+    subtitle: "Degradados de competencia.",
+    price: "$32k",
+    original: "$40k",
+    theme: "bg-[#151515] text-white",
+    position: "bottom-[20px] left-[260px] z-10",
+    width: 250,
+    rotate: 6,
+    float: 8,
+    duration: 8,
+    featured: false,
+  },
+  {
+    day: "Jueves",
+    title: "Combo Pro",
+    subtitle: "Corte + diseño de cejas.",
+    price: "$38k",
+    original: "$50k",
+    theme: "bg-[#1A1A1A] text-white",
+    position: "top-[80px] left-[100px] z-0",
+    width: 220,
+    rotate: 8,
+    float: -12,
+    duration: 9,
+    featured: false,
+  },
+  {
+    day: "Viernes",
+    title: "Friday Sharp",
+    subtitle: "Listo para el fin de semana.",
+    price: "$42k",
+    original: "$55k",
+    theme: "bg-[#0F0F0F] text-white",
+    position: "bottom-[80px] left-[80px] z-0",
+    width: 210,
+    rotate: -6,
+    float: -8,
+    duration: 10,
+    featured: false,
+  },
+];
 const TEAM_SHOWCASE = [
   {
     src: 'https://images.pexels.com/photos/2061820/pexels-photo-2061820.jpeg?auto=compress&cs=tinysrgb&w=1600',
@@ -43,6 +116,69 @@ const TEAM_SHOWCASE = [
   },
 ];
 
+// ─── BARBEROS DESTACADOS ───
+// 💡 Cuando tengas PNGs propios con fondo transparente, solo reemplaza los `src`.
+// El diseño está optimizado para PNG transparente, pero también funciona con fotos normales.
+const BARBEROS = [
+  {
+    name: 'Carlos',
+    lastName: 'Martínez',
+    role: 'Master Barber',
+    signature: 'C. Martínez',
+    years: 15,
+    cuts: '12K+',
+    rating: '4.9',
+    specialty: 'Fade Arquitectónico',
+    tags: ['Fade', 'Skin', 'Líneas'],
+    src: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=900&q=80',
+    accent: '#D4AF37',
+    bio: 'Master de fades arquitectónicos con 15 años de experiencia. Cada corte es una obra de precisión y arte.',
+  },
+  {
+    name: 'Diego',
+    lastName: 'Ramírez',
+    role: 'Senior Stylist',
+    signature: 'D. Ramírez',
+    years: 12,
+    cuts: '9K+',
+    rating: '4.9',
+    specialty: 'Navaja Clásica',
+    tags: ['Navaja', 'Barba', 'Ritual'],
+    src: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=900&q=80',
+    accent: '#C9A84C',
+    bio: 'Especialista en rituales de navaja clásica con 12 años de trayectoria. Experto en técnicas tradicionales.',
+  },
+  {
+    name: 'Andrés',
+    lastName: 'Vega',
+    role: 'Detail Specialist',
+    signature: 'A. Vega',
+    years: 8,
+    cuts: '6K+',
+    rating: '5.0',
+    specialty: 'Perfilado Quirúrgico',
+    tags: ['Perfilado', 'Diseño', 'Líneas'],
+    src: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&w=900&q=80',
+    accent: '#B9922E',
+    bio: 'Especialista en perfilado quirúrgico con 8 años de experiencia. Líneas perfectas y ángulos exactos.',
+  },
+  {
+    name: 'Mateo',
+    lastName: 'Silva',
+    role: 'Style Director',
+    signature: 'M. Silva',
+    years: 18,
+    cuts: '15K+',
+    rating: '4.9',
+    specialty: 'Tijera Japonesa',
+    tags: ['Tijera', 'Texturas', 'Autor'],
+    src: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=80',
+    accent: '#D4AF37',
+    bio: 'Director de estilo con 18 años dominando la técnica de tijera japonesa. Maestro reconocido.',
+  },
+];
+
+const BARBERO_ROTATION_MS = 5000;
 const PROFESSIONAL_TICKER = [
   { icon: BadgeCheck, label: 'Wahl', meta: 'Cordless Legend' },
   { icon: Crown, label: 'Andis', meta: 'Fade Precision' },
@@ -115,6 +251,33 @@ const SERVICES_CATALOG = [
   },
 ];
 
+const KIDS_SERVICES = [
+  {
+    name: 'Primer Corte',
+    ageRange: '2 – 5 años',
+    desc: 'Un hito especial, manejado con toda la delicadeza que merece. Tijeras suaves, ritmo tranquilo y un diploma de valiente al final.',
+    price: '$15k',
+    time: '30 min',
+    tag: 'Iniciación',
+  },
+  {
+    name: 'Corte Joven',
+    ageRange: '6 – 10 años',
+    desc: 'Degradados moderados y líneas limpias adaptadas al rostro de cada niño. Técnica profesional en formato amigable.',
+    price: '$20k',
+    time: '35 min',
+    tag: 'Popular',
+  },
+  {
+    name: 'Fade Junior',
+    ageRange: '11 – 14 años',
+    desc: 'El mismo fade de precisión de nuestro catálogo adulto, calibrado para el estilo y la energía de los más jóvenes.',
+    price: '$25k',
+    time: '40 min',
+    tag: 'Tendencia',
+  },
+];
+
 const PROMO_VALIDITY_BY_DAY: Record<string, string> = {
   LUNES: 'Válido solo lunes · 9AM a 8PM',
   MARTES: 'Válido solo martes · 9AM a 8PM',
@@ -147,6 +310,16 @@ export function LandingPage() {
 
   const heroScale = useTransform(scrollYProgress, [0, 0.25], [1, 1.1]);
 
+  // ── REDUCED MOTION ──
+  const reduceMotion = useReducedMotion();
+
+  // ── BARBEROS LINEUP STATE ──
+  const [activeBarbero, setActiveBarbero] = useState(0);
+  const [barberoPaused, setBarberoPaused] = useState(false);
+  const [barberoProgress, setBarberoProgress] = useState(0);
+  const barberoRafRef = useRef<number | null>(null);
+  const barberoStartRef = useRef<number>(0);
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -163,19 +336,14 @@ export function LandingPage() {
     const intervalId = window.setInterval(() => {
       setActiveHeroSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 5000);
-
     return () => window.clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    if (isTeamCardPaused) {
-      return;
-    }
-
+    if (isTeamCardPaused) return;
     const intervalMs = 4200;
     const tickMs = 60;
     const progressStep = 100 / (intervalMs / tickMs);
-
     const intervalId = window.setInterval(() => {
       setTeamCardProgress((prev) => {
         const next = prev + progressStep;
@@ -186,9 +354,37 @@ export function LandingPage() {
         return next;
       });
     }, tickMs);
-
     return () => window.clearInterval(intervalId);
   }, [isTeamCardPaused]);
+
+  // ── BARBEROS: rotación automática ──
+  useEffect(() => {
+    if (barberoPaused || reduceMotion) return;
+    barberoStartRef.current = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - barberoStartRef.current;
+      const pct = Math.min(elapsed / BARBERO_ROTATION_MS, 1);
+      setBarberoProgress(pct);
+      if (pct >= 1) {
+        setActiveBarbero((a) => (a + 1) % BARBEROS.length);
+        barberoStartRef.current = now;
+        setBarberoProgress(0);
+      }
+      barberoRafRef.current = requestAnimationFrame(tick);
+    };
+
+    barberoRafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (barberoRafRef.current) cancelAnimationFrame(barberoRafRef.current);
+    };
+  }, [barberoPaused, reduceMotion, activeBarbero]);
+
+  const goToBarbero = (i: number) => {
+    setActiveBarbero(i);
+    setBarberoProgress(0);
+    barberoStartRef.current = performance.now();
+  };
 
   const imageToDataUrl = (src: string) =>
     new Promise<string>((resolve, reject) => {
@@ -198,12 +394,7 @@ export function LandingPage() {
         canvas.width = img.width;
         canvas.height = img.height;
         const ctx = canvas.getContext('2d');
-
-        if (!ctx) {
-          reject(new Error('No se pudo crear contexto de canvas'));
-          return;
-        }
-
+        if (!ctx) { reject(new Error('No se pudo crear contexto de canvas')); return; }
         ctx.drawImage(img, 0, 0);
         resolve(canvas.toDataURL('image/jpeg', 0.86));
       };
@@ -215,102 +406,69 @@ export function LandingPage() {
     const { jsPDF } = await import('jspdf');
     const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
 
-    // Portada
     pdf.setFillColor(11, 11, 11);
     pdf.rect(0, 0, 210, 297, 'F');
-    
-    // Línea decorativa
     pdf.setDrawColor(212, 175, 55);
     pdf.setLineWidth(0.5);
     pdf.line(16, 60, 194, 60);
-    
-    // Título principal
     pdf.setTextColor(212, 175, 55);
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(28);
     pdf.text('BARBAROS', 105, 85, { align: 'center' });
-    
-    // Subtítulo
     pdf.setFontSize(11);
     pdf.setTextColor(255, 255, 255);
     pdf.text('CATÁLOGO DE SERVICIOS PREMIUM', 105, 100, { align: 'center' });
     pdf.text('Desde 1888 | Excelencia en Barbería', 105, 108, { align: 'center' });
-    
-    // Línea decorativa inferior
     pdf.setDrawColor(212, 175, 55);
     pdf.line(16, 120, 194, 120);
-    
-    // Descripción
     pdf.setFontSize(10);
     pdf.setTextColor(255, 255, 255);
     pdf.setFont('helvetica', 'normal');
     const coverText = pdf.splitTextToSize(
-      'Cada servicio es una experiencia única donde la pasión por la barbería se une con la precisión artesanal. Nuestros barberos son maestros en el arte ancestral de la navaja y el corte milimétrico.',
+      'Cada servicio es una experiencia única donde la pasión por la barbería se une con la precisión artesanal.',
       160
     );
     pdf.text(coverText, 105, 145, { align: 'center' });
 
-    // Servicios
     for (let i = 0; i < SERVICES_CATALOG.length; i += 1) {
       const service = SERVICES_CATALOG[i];
       pdf.addPage();
       pdf.setFillColor(11, 11, 11);
       pdf.rect(0, 0, 210, 297, 'F');
-      
-      // Número de página y servicio
       pdf.setTextColor(212, 175, 55);
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(9);
       pdf.text(`SERVICIO ${i + 1} / ${SERVICES_CATALOG.length}`, 16, 12);
-      
-      // Línea decorativa
       pdf.setDrawColor(212, 175, 55);
       pdf.setLineWidth(0.3);
       pdf.line(16, 15, 194, 15);
-      
-      // Imagen
       const imgData = await imageToDataUrl(service.image);
       pdf.addImage(imgData, 'JPEG', 35, 25, 140, 90, undefined, 'FAST');
-      
-      // Nombre del servicio
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(20);
       pdf.text(service.name, 105, 130, { align: 'center' });
-      
-      // Separador
       pdf.setDrawColor(212, 175, 55);
       pdf.setLineWidth(0.2);
       pdf.line(40, 135, 170, 135);
-      
-      // Descripción
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(10);
       pdf.setTextColor(200, 200, 200);
       const description = pdf.splitTextToSize(service.desc, 160);
       pdf.text(description, 105, 145, { align: 'center', maxWidth: 160 });
-      
-      // Sección de detalles
       const detailsY = 195;
       pdf.setDrawColor(212, 175, 55);
       pdf.line(16, detailsY - 5, 194, detailsY - 5);
-      
-      // Precio
       pdf.setTextColor(212, 175, 55);
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(12);
       pdf.text('PRECIO', 35, detailsY);
       pdf.setFontSize(16);
       pdf.text(service.price, 35, detailsY + 8);
-      
-      // Duración
-      pdf.setTextColor(212, 175, 55);
       pdf.setFontSize(12);
       pdf.text('DURACIÓN', 105, detailsY);
       pdf.setFontSize(16);
       pdf.text(service.time, 105, detailsY + 8);
-      
-      // Insignia de destacado
       if (service.featured || service.bestseller) {
         pdf.setFillColor(212, 175, 55);
         pdf.rect(145, detailsY - 2, 50, 18, 'F');
@@ -319,13 +477,9 @@ export function LandingPage() {
         pdf.setFontSize(10);
         pdf.text(
           service.featured ? 'DESTACADO' : 'BESTSELLER',
-          170,
-          detailsY + 5,
-          { align: 'center' }
+          170, detailsY + 5, { align: 'center' }
         );
       }
-      
-      // Footer
       pdf.setTextColor(212, 175, 55);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(8);
@@ -337,6 +491,7 @@ export function LandingPage() {
 
   return (
     <div className="landing-minimal min-h-screen bg-white text-[#0B0B0B] overflow-x-hidden font-['Manrope']">
+
       {/* BOTÓN WHATSAPP FLOTANTE */}
       <motion.a
         href="https://wa.me/573001234567"
@@ -347,7 +502,6 @@ export function LandingPage() {
         transition={{ delay: 1, duration: 0.5 }}
         whileHover={{ scale: 1.1 }}
         className="fixed bottom-8 right-8 z-30 bg-[#25D366] text-white p-4 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow"
-        style={{ backdropFilter: 'blur(10px)' }}
       >
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.411-2.391-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.946 1.23l-.355.192-.368-.06c-1.286-.113-2.430-.511-3.428-1.218l-.744-.524-.816.823c-.248.25-.637.675-.637 1.694 0 1.289.465 2.575 1.282 3.603l.42.485-.5.328c-.961.624-1.657 1.462-2.081 2.48l-.27.692.691.423c2.669 1.635 5.812 2.586 9.012 2.586 4.677 0 9.012-1.901 12.117-5.354.31-.324.607-.67.886-1.032.138-.181.27-.365.39-.551l.386-.617-.557-.363c-.368-.237-.888-.601-1.436-1.093-.48-.433-.99-.91-1.524-1.425-.534-.515-1.037-.948-1.513-1.3l-.493-.377z"/>
@@ -362,35 +516,33 @@ export function LandingPage() {
         />
       </div>
 
-      {/* NAVBAR MINIMALISTA */}
+      {/* ─── NAVBAR ─── */}
       <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-700 ${
         scrolled
           ? 'bg-[#0B0B0B]/90 backdrop-blur-xl border-b border-white/5'
           : 'bg-transparent'
       }`}>
-        <div className="max-w-[1360px] mx-auto px-4 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo Centrado */}
+        <div className="max-w-[1360px] mx-auto px-3 lg:px-6">
+          <div className="flex items-center justify-between h-16">
             <motion.a
               href="#inicio"
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
               className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center z-50"
             >
-              <h1 className="font-['Unbounded'] font-bold text-xl lg:text-2xl text-white tracking-tight uppercase">
+              <h1 className="font-['Unbounded'] font-bold text-lg lg:text-xl text-white tracking-tight uppercase">
                 {APP_BRAND.name}
               </h1>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="h-[1px] w-6 bg-[#D4AF37]" />
-                <span className="text-[#D4AF37] text-[8px] tracking-[0.4em] font-['Manrope'] uppercase">
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <div className="h-[1px] w-4 bg-[#D4AF37]" />
+                <span className="text-[#D4AF37] text-[7px] tracking-[0.4em] font-['Manrope'] uppercase">
                   {APP_BRAND.foundationLabel}
                 </span>
-                <div className="h-[1px] w-6 bg-[#D4AF37]" />
+                <div className="h-[1px] w-4 bg-[#D4AF37]" />
               </div>
             </motion.a>
 
-            {/* Menu Izquierda */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-5">
               {desktopLeftNav.map((item, idx) => (
                 <motion.a
                   key={item}
@@ -398,15 +550,14 @@ export function LandingPage() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.08 }}
-                  className="text-white/70 hover:text-[#D4AF37] transition-colors text-[10px] tracking-[0.2em] font-['Manrope'] uppercase font-medium"
+                  className="text-white/70 hover:text-[#D4AF37] transition-colors text-[9px] tracking-[0.2em] font-['Manrope'] uppercase font-medium"
                 >
                   {item}
                 </motion.a>
               ))}
             </div>
 
-            {/* Menu Derecha */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-5">
               {desktopRightNav.map((item, idx) => (
                 <motion.a
                   key={item}
@@ -414,7 +565,7 @@ export function LandingPage() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: (idx + 2) * 0.08 }}
-                  className="text-white/70 hover:text-[#D4AF37] transition-colors text-[10px] tracking-[0.2em] font-['Manrope'] uppercase font-medium"
+                  className="text-white/70 hover:text-[#D4AF37] transition-colors text-[9px] tracking-[0.2em] font-['Manrope'] uppercase font-medium"
                 >
                   {item}
                 </motion.a>
@@ -424,13 +575,12 @@ export function LandingPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 }}
-                className="bg-[#D4AF37] text-[#0B0B0B] px-8 py-3 font-bold text-[10px] tracking-[0.2em] uppercase hover:bg-[#C9A84C] transition-colors"
+                className="bg-[#D4AF37] text-[#0B0B0B] px-6 py-2 font-bold text-[9px] tracking-[0.2em] uppercase hover:bg-[#C9A84C] transition-colors"
               >
                 Reservar
               </motion.a>
             </div>
 
-            {/* Mobile Menu */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden text-white p-2 z-50"
@@ -440,7 +590,6 @@ export function LandingPage() {
           </div>
         </div>
 
-        {/* Mobile Menu Dropdown */}
         {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -471,16 +620,13 @@ export function LandingPage() {
         )}
       </nav>
 
-      {/* HERO MINIMALISTA */}
+      {/* ─── HERO ─── */}
       <section
         ref={heroRef}
         id="inicio"
         className="relative min-h-screen flex items-center overflow-hidden bg-[#0B0B0B]"
       >
-        <motion.div
-          style={{ scale: heroScale }}
-          className="absolute inset-0"
-        >
+        <motion.div style={{ scale: heroScale }} className="absolute inset-0">
           {HERO_SLIDES.map((slide, index) => (
             <motion.img
               key={`${slide}-${index}`}
@@ -502,15 +648,15 @@ export function LandingPage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_55%)]" />
         </motion.div>
 
-        <div className="relative z-10 min-h-screen w-full px-4 lg:px-8 flex items-center justify-center">
-          <div className="w-full max-w-3xl text-center pt-20 lg:pt-24">
+        <div className="relative z-10 min-h-screen w-full px-4 lg:px-6 flex items-center justify-center">
+          <div className="w-full max-w-3xl text-center pt-12 lg:pt-16">
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.15 }}
-              className="mb-5"
+              className="mb-3"
             >
-              <span className="text-white/85 text-[11px] tracking-[0.42em] font-['Manrope'] uppercase font-semibold">
+              <span className="text-white/85 text-[10px] tracking-[0.42em] font-['Manrope'] uppercase font-semibold">
                 Stay Sharp, Look Good
               </span>
             </motion.div>
@@ -519,7 +665,7 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.95, delay: 0.35 }}
-              className="font-['Unbounded'] font-bold text-3xl sm:text-4xl lg:text-6xl text-white uppercase leading-[1] tracking-tight mb-6"
+              className="font-['Unbounded'] font-bold text-2xl sm:text-3xl lg:text-5xl text-white uppercase leading-[1] tracking-tight mb-4"
             >
               NYC'S Favourite
               <span className="block">Barber Shop.</span>
@@ -529,30 +675,29 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.65 }}
-              className="text-white/80 text-[10px] sm:text-xs tracking-[0.24em] uppercase mb-6 font-['Manrope']"
+              className="text-white/80 text-[9px] sm:text-[10px] tracking-[0.24em] uppercase mb-4 font-['Manrope']"
             >
               Broadway St, NYC. Appointment | 855 100 4444
             </motion.p>
 
-            {/* Stats de Credibilidad */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.75 }}
-              className="flex items-center justify-center gap-8 mb-8 text-white/70 text-[9px] tracking-wider"
+              className="flex flex-wrap items-center justify-center gap-4 mb-6 text-white/70 text-[8px] tracking-wider"
             >
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"/>
+              <div className="flex items-center gap-1.5">
+                <div className="w-1 h-1 rounded-full bg-[#D4AF37]"/>
                 <span>Desde 1888</span>
               </div>
-              <div className="w-[1px] h-4 bg-white/20"/>
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"/>
+              <div className="w-[1px] h-3 bg-white/20"/>
+              <div className="flex items-center gap-1.5">
+                <div className="w-1 h-1 rounded-full bg-[#D4AF37]"/>
                 <span>+10K satisfechos</span>
               </div>
-              <div className="w-[1px] h-4 bg-white/20"/>
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"/>
+              <div className="w-[1px] h-3 bg-white/20"/>
+              <div className="flex items-center gap-1.5">
+                <div className="w-1 h-1 rounded-full bg-[#D4AF37]"/>
                 <span>Garantía 100%</span>
               </div>
             </motion.div>
@@ -567,7 +712,7 @@ export function LandingPage() {
                 href="#ubicación"
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-white text-[#0B0B0B] px-8 py-3.5 font-['Manrope'] font-bold text-[11px] tracking-[0.16em] uppercase inline-flex items-center justify-center hover:bg-[#F3F3F3] transition-colors duration-300 shadow-[0_12px_35px_rgba(0,0,0,0.28)]"
+                className="bg-white text-[#0B0B0B] px-6 py-2.5 font-['Manrope'] font-bold text-[10px] tracking-[0.16em] uppercase inline-flex items-center justify-center hover:bg-[#F3F3F3] transition-colors duration-300 shadow-[0_12px_35px_rgba(0,0,0,0.28)]"
               >
                 Book Appointment
               </motion.a>
@@ -597,8 +742,8 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* WAVE */}
-      <div className="relative h-24 -mt-24 z-10 pointer-events-none">
+      {/* WAVE hero → filosofía */}
+      <div className="relative h-16 -mt-16 z-10 pointer-events-none">
         <svg viewBox="0 0 1440 200" preserveAspectRatio="none" className="w-full h-full">
           <defs>
             <filter id="abstract-paint-1" x="-50%" y="-50%" width="200%" height="200%">
@@ -606,336 +751,224 @@ export function LandingPage() {
               <feDisplacementMap in="SourceGraphic" scale="40" />
             </filter>
           </defs>
-          <path
-            d="M0,120 L200,160 L350,130 L520,155 L680,125 L850,145 L1020,130 L1180,150 L1320,135 L1440,155 L1440,200 L0,200 Z"
-            fill="white"
-            filter="url(#abstract-paint-1)"
-            opacity="0.95"
-          />
-          <path
-            d="M0,140 L180,110 L380,135 L600,115 L820,130 L1050,120 L1260,135 L1440,125 L1440,200 L0,200 Z"
-            fill="white"
-            opacity="0.7"
-          />
-          <path
-            d="M0,155 L240,145 L480,160 L720,150 L960,165 L1200,155 L1440,170 L1440,200 L0,200 Z"
-            fill="white"
-            opacity="0.5"
-          />
+          <path d="M0,120 L200,160 L350,130 L520,155 L680,125 L850,145 L1020,130 L1180,150 L1320,135 L1440,155 L1440,200 L0,200 Z" fill="white" filter="url(#abstract-paint-1)" opacity="0.95" />
+          <path d="M0,140 L180,110 L380,135 L600,115 L820,130 L1050,120 L1260,135 L1440,125 L1440,200 L0,200 Z" fill="white" opacity="0.7" />
+          <path d="M0,155 L240,145 L480,160 L720,150 L960,165 L1200,155 L1440,170 L1440,200 L0,200 Z" fill="white" opacity="0.5" />
         </svg>
       </div>
+{/* ─── FILOSOFÍA + MASTER ATELIER (BARBEROS) ─── */}
+{/* ─── MASTER ATELIER — GALERÍA EDITORIAL ─── */}
+<section
+  id="filosofía"
+  className="relative bg-[#F7F4ED] py-16 lg:py-24 px-4 lg:px-8 overflow-hidden"
+  onMouseEnter={() => setBarberoPaused(true)}
+  onMouseLeave={() => setBarberoPaused(false)}
+>
+  <div className="max-w-[1240px] mx-auto relative">
 
-      {/* FILOSOFÍA EDITORIAL */}
-      <section id="filosofía" className="relative bg-[linear-gradient(180deg,#FBFAF6_0%,#F3EFE6_100%)] px-4 lg:px-12 py-20 lg:py-28 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-[#D4AF37]/8 blur-3xl" />
-          <div className="absolute top-20 right-0 w-[40vw] h-[1px] bg-gradient-to-l from-[#D4AF37]/35 to-transparent" />
-          <div className="absolute bottom-24 left-0 w-[32vw] h-[1px] bg-gradient-to-r from-[#0B0B0B]/12 to-transparent" />
-        </div>
+    {/* Header minimal */}
+    <div className="flex items-center justify-between mb-12 lg:mb-16">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-px bg-[#0B0B0B]" />
+        <span className="text-[#0B0B0B] text-[10px] tracking-[0.55em] uppercase font-semibold">
+          Master Atelier
+        </span>
+      </div>
+      <span className="text-[#0B0B0B]/40 text-[10px] tracking-[0.4em] uppercase font-['Manrope']">
+        Vol.&nbsp;{String(activeBarbero + 1).padStart(2, '0')}
+      </span>
+    </div>
 
-        <div className="max-w-[1320px] mx-auto relative z-10">
-          <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-8 lg:gap-14 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="relative rounded-[2.2rem] border border-[#0B0B0B]/8 bg-white backdrop-blur-sm p-7 sm:p-9 lg:p-11 shadow-[0_24px_70px_rgba(0,0,0,0.07)] overflow-hidden"
+    {/* Layout principal: 6 / 6 */}
+    <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+
+      {/* IZQ — Foto retrato grande */}
+      <div className="lg:col-span-6 relative">
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#0B0B0B]/5">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={BARBEROS[activeBarbero].src}
+              src={BARBEROS[activeBarbero].src}
+              alt={`${BARBEROS[activeBarbero].name} ${BARBEROS[activeBarbero].lastName}`}
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </AnimatePresence>
+
+          {/* Marca de agua del número */}
+          <div className="absolute top-3 left-4 text-white/85 text-[9px] tracking-[0.5em] uppercase font-semibold">
+            {String(activeBarbero + 1).padStart(2, '0')} — {String(BARBEROS.length).padStart(2, '0')}
+          </div>
+
+          {/* Etiqueta inferior con role */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
+            <p
+              className="text-[9px] tracking-[0.5em] uppercase font-semibold mb-0.5"
+              style={{ color: BARBEROS[activeBarbero].accent }}
             >
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(198,168,91,0.06)_0,transparent_28%),radial-gradient(circle_at_86%_84%,rgba(11,11,11,0.045)_0,transparent_34%)]" />
-              <div className="absolute left-0 top-0 h-[2px] w-full bg-gradient-to-r from-transparent via-[#C6A85B]/45 to-transparent" />
+              {BARBEROS[activeBarbero].role}
+            </p>
+            <p className="text-white text-[12px] tracking-[0.25em] uppercase">
+              {BARBEROS[activeBarbero].specialty}
+            </p>
+          </div>
+        </div>
+      </div>
 
-              <div className="flex items-center justify-between gap-4">
-                <span className="inline-flex items-center gap-2 text-[#0B0B0B]/50 text-[10px] tracking-[0.4em] font-semibold uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
-                  Manifiesto {APP_BRAND.foundationLabel}
-                </span>
-                <span className="text-[10px] tracking-[0.44em] uppercase text-[#0B0B0B]/24">STUDIO NOTE</span>
+      {/* DER — Información editorial */}
+      <div className="lg:col-span-6 lg:pt-4 relative">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`info-${activeBarbero}`}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* Nombre como protagonista */}
+            <h2 className="font-['Unbounded'] uppercase leading-[0.86] tracking-[-0.045em] text-[#0B0B0B]">
+              <span className="block text-2xl sm:text-3xl lg:text-4xl">
+                {BARBEROS[activeBarbero].name}
+              </span>
+              <span className="block text-[#0B0B0B]/35 text-2xl sm:text-3xl lg:text-4xl">
+                {BARBEROS[activeBarbero].lastName}
+              </span>
+            </h2>
+
+            {/* Línea editorial */}
+            <div className="mt-6 lg:mt-8 h-px w-12 bg-[#0B0B0B]" />
+
+            {/* Descripción única, calmada */}
+            <p className="mt-5 text-[#0B0B0B]/65 text-sm leading-[1.8] max-w-[460px]">
+              {BARBEROS[activeBarbero].bio ||
+                `Más de ${BARBEROS[activeBarbero].years} años perfeccionando la técnica del ${BARBEROS[activeBarbero].specialty.toLowerCase()}. Cada cita es un diagnóstico personalizado, no una rutina.`}
+            </p>
+
+            {/* Stats inline editorial — 3 cifras */}
+            <div className="mt-8 lg:mt-10 grid grid-cols-3 gap-4 lg:gap-8 max-w-[460px]">
+              <div>
+                <p className="text-[#0B0B0B]/35 text-[8px] tracking-[0.4em] uppercase mb-1.5">
+                  Trayectoria
+                </p>
+                <p className="font-['Unbounded'] text-[#0B0B0B] text-xl font-bold leading-none">
+                  {BARBEROS[activeBarbero].years}
+                  <span className="text-[#0B0B0B]/30 text-xs ml-1">años</span>
+                </p>
               </div>
-
-              <h2 className="relative z-10 mt-5 font-['Unbounded'] uppercase leading-[0.86] tracking-[-0.055em]">
-                <span className="block text-[#0B0B0B] text-[1.85rem] sm:text-[2.35rem] lg:text-[2.95rem]">DISEÑO</span>
-                <span className="block text-[#0B0B0B] text-[1.85rem] sm:text-[2.35rem] lg:text-[2.95rem]">DE IMAGEN</span>
-                <span className="mt-2 block text-[#C6A85B] text-[2.8rem] sm:text-[3.85rem] lg:text-[4.95rem] drop-shadow-[0_0_10px_rgba(198,168,91,0.12)]">PRECISIÓN</span>
-                <span className="mt-2 block text-[#0B0B0B]/72 text-[0.88rem] sm:text-[1rem] lg:text-[1.05rem] tracking-[0.34em]">CLEAN / MODERN / CUSTOM</span>
-              </h2>
-
-              <p className="mt-6 text-[#0B0B0B]/56 text-[13px] sm:text-sm lg:text-[15px] leading-[1.85] max-w-lg">
-                Cortes limpios, precisos y hechos a medida.
-              </p>
-
-              <div className="mt-8 grid sm:grid-cols-2 gap-3">
-                <div className="rounded-full border border-[#C6A85B]/45 bg-[#FAF8F4] px-5 py-3 transition-all duration-300 hover:bg-[#C6A85B] hover:-translate-y-0.5 group shadow-[0_8px_24px_rgba(0,0,0,0.03)]">
-                  <p className="text-[10px] tracking-[0.44em] uppercase text-[#0B0B0B]/45 group-hover:text-[#0B0B0B]">Método</p>
-                  <p className="mt-1 text-[13px] lg:text-[14px] text-[#0B0B0B]/86 font-semibold group-hover:text-[#0B0B0B]">Diagnóstico + acabado</p>
-                </div>
-                <div className="rounded-full border border-[#C6A85B]/45 bg-[#FAF8F4] px-5 py-3 transition-all duration-300 hover:bg-[#C6A85B] hover:-translate-y-0.5 group shadow-[0_8px_24px_rgba(0,0,0,0.03)]">
-                  <p className="text-[10px] tracking-[0.44em] uppercase text-[#0B0B0B]/45 group-hover:text-[#0B0B0B]">Estándar</p>
-                  <p className="mt-1 text-[13px] lg:text-[14px] text-[#0B0B0B]/86 font-semibold group-hover:text-[#0B0B0B]">Detalle total</p>
-                </div>
+              <div className="border-l border-[#0B0B0B]/12 pl-4 lg:pl-8">
+                <p className="text-[#0B0B0B]/35 text-[8px] tracking-[0.4em] uppercase mb-1.5">
+                  Cortes
+                </p>
+                <p className="font-['Unbounded'] text-[#0B0B0B] text-xl font-bold leading-none">
+                  {BARBEROS[activeBarbero].cuts}
+                </p>
               </div>
+              <div className="border-l border-[#0B0B0B]/12 pl-4 lg:pl-8">
+                <p className="text-[#0B0B0B]/35 text-[8px] tracking-[0.4em] uppercase mb-1.5">
+                  Rating
+                </p>
+                <p className="font-['Unbounded'] text-[#0B0B0B] text-xl font-bold leading-none">
+                  {BARBEROS[activeBarbero].rating}
+                  <span className="text-[#C6A85B] text-xs ml-1">★</span>
+                </p>
+              </div>
+            </div>
 
-              <motion.a
-                href="#servicios"
-                whileHover={{ x: 8 }}
-                className="mt-10 inline-flex items-center gap-3 text-[11px] tracking-[0.34em] uppercase font-bold text-[#0B0B0B]"
-              >
-                Ver catálogo completo
-                <motion.span
-                  animate={{ x: [0, 3, 0] }}
-                  transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+            {/* CTA discreto */}
+            <motion.a
+              href="https://wa.me/573001234567"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ x: 4 }}
+              className="mt-8 inline-flex items-center gap-2 text-[10px] tracking-[0.34em] uppercase font-bold text-[#0B0B0B] border-b border-[#0B0B0B] pb-1"
+            >
+              Reservar con {BARBEROS[activeBarbero].name}
+              <ArrowRight className="w-4 h-4" />
+            </motion.a>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+
+    {/* Tabla de contenidos — navegación editorial */}
+    <div className="mt-14 lg:mt-20 border-t border-[#0B0B0B]/12">
+      <div className="grid grid-cols-2 lg:grid-cols-4">
+        {BARBEROS.map((b, i) => {
+          const active = i === activeBarbero;
+          return (
+            <button
+              key={b.name}
+              onClick={() => goToBarbero(i)}
+              className="group relative text-left py-5 px-3 lg:px-6 border-b lg:border-b-0 lg:border-r border-[#0B0B0B]/12 last:border-r-0 transition-colors hover:bg-white/60"
+            >
+              {/* Barra de progreso del activo */}
+              {active && !reduceMotion && (
+                <div
+                  className="absolute top-0 left-0 h-px bg-[#0B0B0B]"
+                  style={{ width: `${barberoProgress * 100}%` }}
+                />
+              )}
+              {/* Línea inferior estática para activo */}
+              {active && (
+                <div className="absolute -top-px left-0 right-0 h-px bg-[#0B0B0B]" />
+              )}
+
+              <div className="flex items-baseline gap-3">
+                <span
+                  className={`font-['Unbounded'] text-[10px] tracking-[0.4em] transition-colors ${
+                    active ? 'text-[#0B0B0B]' : 'text-[#0B0B0B]/30'
+                  }`}
                 >
-                  <ArrowRight className="w-4 h-4 text-[#B9922E]" />
-                </motion.span>
-              </motion.a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 36 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.15 }}
-              className="relative"
-            >
-              <div
-                className="relative rounded-[2rem] bg-[#0E0D0B] p-5 sm:p-6 lg:p-7 shadow-[0_18px_58px_rgba(0,0,0,0.22)] overflow-hidden border border-white/5"
-                onMouseEnter={() => setIsTeamCardPaused(true)}
-                onMouseLeave={() => setIsTeamCardPaused(false)}
-              >
-                <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.03),transparent_26%,transparent_72%,rgba(198,168,91,0.06)),radial-gradient(circle_at_72%_12%,rgba(198,168,91,0.12),transparent_20%)]" />
-                <div className="absolute top-0 right-0 w-52 h-52 bg-[#D4AF37]/8 blur-3xl" />
-                <div className="absolute left-6 top-6 text-white/45 text-[10px] tracking-[0.42em] uppercase font-semibold">Nuestro Equipo</div>
-
-                <div className="mt-9 relative h-[330px] sm:h-[390px] lg:h-[450px] rounded-[1.5rem] overflow-hidden">
-                  {TEAM_SHOWCASE.map((slide, index) => (
-                    <motion.img
-                      key={`${slide}-${index}`}
-                      src={slide.src}
-                      alt="Equipo de barbería en sesión"
-                      initial={false}
-                      animate={{
-                        opacity: index === activeTeamCardSlide ? 1 : 0,
-                        scale: index === activeTeamCardSlide ? 1 : 1.06,
-                        y: index === activeTeamCardSlide ? 0 : -6,
-                      }}
-                      transition={{
-                        opacity: { duration: 0.85, ease: 'easeInOut' },
-                        scale: { duration: 2.4, ease: 'easeOut' },
-                        y: { duration: 0.9, ease: 'easeOut' },
-                      }}
-                      className="absolute inset-0 w-full h-full object-cover object-center"
-                    />
-                  ))}
-
-                  <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.82),rgba(0,0,0,0.18)_34%,rgba(0,0,0,0.0)_70%)]" />
-                  <div className="absolute inset-5 border border-white/10 rounded-[1.15rem] pointer-events-none" />
-
-                  <div className="absolute left-5 bottom-5 pr-4 max-w-[72%]">
-                    <p className="text-white text-sm sm:text-base font-semibold tracking-[0.32em] uppercase">
-                      {TEAM_SHOWCASE[activeTeamCardSlide].title}
-                    </p>
-                    <p className="text-white/68 text-[11px] tracking-[0.28em] uppercase mt-2">
-                      {TEAM_SHOWCASE[activeTeamCardSlide].caption}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 grid gap-4 md:grid-cols-[1fr_auto] md:items-end text-white/90">
-                  <div>
-                    <p className="text-[11px] tracking-[0.32em] uppercase">Barbero + cliente</p>
-                    <p className="mt-1 text-[10px] tracking-[0.28em] uppercase text-white/58">Precisión en tiempo real</p>
-                  </div>
-                  <div className="text-right text-[10px] tracking-[0.34em] uppercase text-white/50">
-                    Team / Studio / Ritual
-                  </div>
-                </div>
-
-                <div className="mt-5 flex flex-wrap items-center gap-3 text-[11px] tracking-[0.2em] uppercase text-white/82">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-2 bg-white/5">
-                    <span className="text-[#D4AF37] font-bold drop-shadow-[0_0_8px_rgba(212,175,55,0.18)]">4.9 ★</span>
-                    <span className="text-white/38">•</span>
-                    <span>Top</span>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-2 bg-white/5">
-                    <span className="text-[#D4AF37] font-bold drop-shadow-[0_0_8px_rgba(212,175,55,0.18)]">100%</span>
-                    <span className="text-white/38">•</span>
-                    <span>Fino</span>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-2 bg-white/5">
-                    <span className="text-[#D4AF37] font-bold drop-shadow-[0_0_8px_rgba(212,175,55,0.18)]">135</span>
-                    <span className="text-white/38">•</span>
-                    <span>Legacy</span>
-                  </span>
-                </div>
-
-                <div className="mt-5 space-y-2">
-                  <div className="h-[2px] w-full bg-white/10 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-[#D4AF37]"
-                      style={{ width: `${teamCardProgress}%` }}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-center gap-2 pt-1">
-                    {TEAM_SHOWCASE.map((_, index) => (
-                      <button
-                        type="button"
-                        aria-label={`Ir a foto ${index + 1}`}
-                        onClick={() => {
-                          setActiveTeamCardSlide(index);
-                          setTeamCardProgress(0);
-                        }}
-                        onFocus={() => setIsTeamCardPaused(true)}
-                        onBlur={() => setIsTeamCardPaused(false)}
-                        key={index}
-                        className={`h-1 rounded-full transition-all duration-300 ${
-                          index === activeTeamCardSlide ? 'w-7 bg-[#D4AF37]' : 'w-2 bg-white/20 hover:bg-white/40'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-2 flex items-center justify-end">
-                  <span className="text-[10px] tracking-[0.16em] uppercase text-white/45">
-                    {String(activeTeamCardSlide + 1).padStart(2, '0')} / {String(TEAM_SHOWCASE.length).padStart(2, '0')}
-                  </span>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p
+                    className={`font-['Unbounded'] uppercase text-sm lg:text-base tracking-tight font-semibold leading-tight transition-colors ${
+                      active ? 'text-[#0B0B0B]' : 'text-[#0B0B0B]/50 group-hover:text-[#0B0B0B]'
+                    }`}
+                  >
+                    {b.name}
+                  </p>
+                  <p
+                    className={`text-[9px] tracking-[0.32em] uppercase mt-0.5 transition-colors ${
+                      active ? 'text-[#C6A85B]' : 'text-[#0B0B0B]/35'
+                    }`}
+                  >
+                    {b.role}
+                  </p>
                 </div>
               </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* WAVE */}
-      <div className="relative h-20 bg-white">
-        <svg viewBox="0 0 1440 150" preserveAspectRatio="none" className="w-full h-full bg-[#ffffff00]">
-          <defs>
-            <filter id="abstract-paint-2" x="-50%" y="-50%" width="200%" height="200%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.025 0.015" numOctaves="4" seed="28" />
-              <feDisplacementMap in="SourceGraphic" scale="35" />
-            </filter>
-          </defs>
-          <path
-            d="M0,90 L150,120 L320,95 L480,115 L640,100 L800,120 L960,105 L1120,125 L1280,110 L1440,120 L1440,150 L0,150 Z"
-            fill="#0B0B0B"
-            filter="url(#abstract-paint-2)"
-            opacity="0.9"
-          />
-          <path
-            d="M0,105 L220,85 L440,100 L660,80 L880,95 L1100,85 L1320,100 L1440,90 L1440,150 L0,150 Z"
-            fill="white"
-            opacity="0.6"
-          />
-        </svg>
+            </button>
+          );
+        })}
       </div>
+    </div>
+  </div>
+</section>
 
-      {/* SECCIÓN DIFERENCIADORA */}
-      <section className="relative bg-[#0B0B0B] py-10 lg:py-14 px-4 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04),transparent_45%)]" />
-        <div className="max-w-[1360px] mx-auto relative z-10 space-y-4">
-          <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
-            <span className="text-white/45 text-[10px] tracking-[0.4em] uppercase font-semibold">ATELIER SYSTEM</span>
-            <span className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">PROFESSIONAL ONLY</span>
-          </div>
 
-          <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.02]">
-            <motion.div
-              className="flex w-max items-center gap-3 py-4 px-4"
-              animate={{ x: ['0%', '-50%'] }}
-              transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
-            >
-              {PROFESSIONAL_TICKER.concat(PROFESSIONAL_TICKER).map((item, index) => {
-                const Icon = item.icon;
-
-                return (
-                  <div
-                    key={`${item.label}-${index}`}
-                    className="group flex items-center gap-3 rounded-full border border-[#D4AF37]/20 bg-[#0F0F0F] px-4 py-2.5 whitespace-nowrap shadow-[0_8px_24px_rgba(0,0,0,0.18)]"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/10 text-[#D4AF37]">
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div className="leading-none">
-                      <p className="text-white text-[11px] tracking-[0.2em] uppercase font-semibold">{item.label}</p>
-                      <p className="mt-1 text-white/45 text-[9px] tracking-[0.28em] uppercase">{item.meta}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </motion.div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.02]">
-            <motion.div
-              className="flex w-max items-center gap-3 py-4 px-4"
-              animate={{ x: ['-50%', '0%'] }}
-              transition={{ duration: 34, repeat: Infinity, ease: 'linear' }}
-            >
-              {PROFESSIONAL_SYSTEMS.concat(PROFESSIONAL_SYSTEMS).map((item, index) => {
-                const Icon = item.icon;
-
-                return (
-                  <div
-                    key={`${item.label}-${index}`}
-                    className="flex items-center gap-3 rounded-full border border-white/8 bg-[#0C0C0C] px-4 py-2.5 whitespace-nowrap"
-                  >
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#D4AF37]/12 text-[#D4AF37]">
-                      <Icon className="h-3.5 w-3.5" />
-                    </div>
-                    <div className="leading-none">
-                      <p className="text-white text-[10px] tracking-[0.26em] uppercase font-semibold">{item.label}</p>
-                      <p className="mt-1 text-white/40 text-[9px] tracking-[0.3em] uppercase">{item.meta}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </motion.div>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-              <p className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">135 años</p>
-              <p className="mt-2 text-white/58 text-[11px] tracking-[0.22em] uppercase">Legacy</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-              <p className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">Tools</p>
-              <p className="mt-2 text-white/58 text-[11px] tracking-[0.22em] uppercase">Selected</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-              <p className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">Ritual</p>
-              <p className="mt-2 text-white/58 text-[11px] tracking-[0.22em] uppercase">Service</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-              <p className="text-[#D4AF37] text-[10px] tracking-[0.35em] uppercase font-semibold">100% exact</p>
-              <p className="mt-2 text-white/58 text-[11px] tracking-[0.22em] uppercase">Standard</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SERVICIOS - DISEÑO MINIMALISTA RESTRUCTURADO */}
-      <section id="servicios" className="relative bg-[#0B0B0B] py-14 lg:py-20 px-4 lg:px-8">
+      {/* ─── SERVICIOS ─── */}
+      <section id="servicios" className="relative bg-[#0B0B0B] py-10 lg:py-14 px-4 lg:px-6">
         <div className="max-w-[1200px] mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex items-center justify-center gap-2 mb-4"
+              className="flex items-center justify-center gap-2 mb-3"
             >
-              <div className="h-[1px] w-8 bg-[#D4AF37]" />
-              <span className="text-[#D4AF37] text-[9px] tracking-[0.5em] font-['DM_Sans'] uppercase">
-                Servicios
-              </span>
-              <div className="h-[1px] w-8 bg-[#D4AF37]" />
+              <div className="h-[1px] w-6 bg-[#D4AF37]" />
+              <span className="text-[#D4AF37] text-[8px] tracking-[0.5em] font-['DM_Sans'] uppercase">Servicios</span>
+              <div className="h-[1px] w-6 bg-[#D4AF37]" />
             </motion.div>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-['Unbounded'] font-semibold text-4xl lg:text-5xl text-white mb-4 uppercase tracking-tight"
+              className="font-['Unbounded'] font-semibold text-3xl lg:text-4xl text-white mb-3 uppercase tracking-tight"
             >
               El Arsenal Bárbaro
             </motion.h2>
@@ -944,18 +977,18 @@ export function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-white/50 text-base max-w-2xl mx-auto"
+              className="text-white/50 text-sm max-w-2xl mx-auto"
             >
               Técnicas ancestrales perfeccionadas durante 135 años
             </motion.p>
 
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
               <motion.button
                 onClick={downloadCatalogPdf}
                 whileHover={{ y: -2 }}
-                className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/70 px-5 py-2.5 text-[11px] font-bold tracking-[0.14em] uppercase text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors"
+                className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/70 px-4 py-2 text-[10px] font-bold tracking-[0.14em] uppercase text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors"
               >
-                <FileDown className="w-4 h-4" />
+                <FileDown className="w-3.5 h-3.5" />
                 Catálogo PDF
               </motion.button>
               <motion.a
@@ -963,7 +996,7 @@ export function LandingPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
-                className="inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-6 py-2.5 text-[11px] font-bold tracking-[0.14em] uppercase text-[#0B0B0B] hover:bg-[#C9A84C] transition-colors"
+                className="inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-5 py-2 text-[10px] font-bold tracking-[0.14em] uppercase text-[#0B0B0B] hover:bg-[#C9A84C] transition-colors"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.411-2.391-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.946 1.23l-.355.192-.368-.06c-1.286-.113-2.430-.511-3.428-1.218l-.744-.524-.816.823c-.248.25-.637.675-.637 1.694 0 1.289.465 2.575 1.282 3.603l.42.485-.5.328c-.961.624-1.657 1.462-2.081 2.48l-.27.692.691.423c2.669 1.635 5.812 2.586 9.012 2.586 4.677 0 9.012-1.901 12.117-5.354.31-.324.607-.67.886-1.032.138-.181.27-.365.39-.551l.386-.617-.557-.363c-.368-.237-.888-.601-1.436-1.093-.48-.433-.99-.91-1.524-1.425-.534-.515-1.037-.948-1.513-1.3l-.493-.377z"/>
@@ -973,79 +1006,66 @@ export function LandingPage() {
             </div>
           </div>
 
-          {/* Lista de Servicios - Minimalista */}
-          <div className="space-y-6">
-            {SERVICES_CATALOG.map((service, idx) => {
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.05 }}
-                  className={`group relative border-t border-white/10 pt-6 hover:border-[#D4AF37]/30 transition-all duration-500 ${
-                    service.featured ? 'bg-[#D4AF37]/5 -mx-4 lg:-mx-5 px-4 lg:px-5 py-6' : ''
-                  }`}
-                >
-                  <div className="grid lg:grid-cols-12 gap-6 items-center">
-                    {/* Info */}
-                    <div className="lg:col-span-7">
-                      <div className="flex items-center gap-3 mb-2 flex-wrap">
-                        <h3 className="font-['Unbounded'] font-semibold text-xl lg:text-2xl text-white uppercase tracking-tight">
-                          {service.name}
-                        </h3>
-                        {service.featured && (
-                          <span className="bg-[#D4AF37] text-[#0B0B0B] px-3 py-1 text-[8px] tracking-wider uppercase font-bold">
-                             Recomendado
-                          </span>
-                        )}
-                        {service.bestseller && (
-                          <span className="bg-[#D4AF37] text-[#0B0B0B] px-3 py-1 text-[8px] tracking-wider uppercase font-bold">
-                             Top Ventas
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-white/50 text-sm leading-relaxed">
-                        {service.desc}
-                      </p>
+          <div className="space-y-4">
+            {SERVICES_CATALOG.map((service, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.05 }}
+                className={`group relative border-t border-white/10 pt-4 hover:border-[#D4AF37]/30 transition-all duration-500 ${
+                  service.featured ? 'bg-[#D4AF37]/5 -mx-3 lg:-mx-4 px-3 lg:px-4 py-4' : ''
+                }`}
+              >
+                <div className="grid lg:grid-cols-12 gap-4 items-center">
+                  <div className="lg:col-span-7">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <h3 className="font-['Unbounded'] font-semibold text-lg lg:text-xl text-white uppercase tracking-tight">
+                        {service.name}
+                      </h3>
+                      {service.featured && (
+                        <span className="bg-[#D4AF37] text-[#0B0B0B] px-2.5 py-0.5 text-[7px] tracking-wider uppercase font-bold">
+                          Recomendado
+                        </span>
+                      )}
+                      {service.bestseller && (
+                        <span className="bg-[#D4AF37] text-[#0B0B0B] px-2.5 py-0.5 text-[7px] tracking-wider uppercase font-bold">
+                          Top Ventas
+                        </span>
+                      )}
                     </div>
+                    <p className="text-white/50 text-xs leading-relaxed">{service.desc}</p>
+                  </div>
 
-                    {/* Precio y Tiempo */}
-                    <div className="lg:col-span-4 flex lg:justify-end gap-8 items-center">
-                      <div>
-                        <div className="text-white/30 text-[9px] tracking-wider uppercase mb-1">Precio</div>
-                        <div className="font-['Unbounded'] text-2xl text-white font-bold tracking-tight">
-                          {service.price}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-white/30 text-[9px] tracking-wider uppercase mb-1">Tiempo</div>
-                        <div className="text-white/60 text-lg">
-                          {service.time}
-                        </div>
-                      </div>
+                  <div className="lg:col-span-4 flex lg:justify-end gap-6 items-center">
+                    <div>
+                      <div className="text-white/30 text-[8px] tracking-wider uppercase mb-0.5">Precio</div>
+                      <div className="font-['Unbounded'] text-xl text-white font-bold tracking-tight">{service.price}</div>
                     </div>
-
-                    {/* CTA Button */}
-                    <div className="lg:col-span-1 hidden lg:flex lg:justify-end">
-                      <motion.a
-                        href="https://wa.me/573001234567"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ scale: 1.05 }}
-                        className="text-[10px] font-bold tracking-wider uppercase px-4 py-2 border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10 rounded transition-colors"
-                      >
-                        Agendar
-                      </motion.a>
+                    <div>
+                      <div className="text-white/30 text-[8px] tracking-wider uppercase mb-0.5">Tiempo</div>
+                      <div className="text-white/60 text-base">{service.time}</div>
                     </div>
                   </div>
-                </motion.div>
-              );
-            })}
+
+                  <div className="lg:col-span-1 hidden lg:flex lg:justify-end">
+                    <motion.a
+                      href="https://wa.me/573001234567"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.05 }}
+                      className="text-[9px] font-bold tracking-wider uppercase px-3 py-1.5 border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10 rounded transition-colors"
+                    >
+                      Agendar
+                    </motion.a>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
 
-        {/* Path decorativo blanco */}
         <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none">
           <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-full">
             <defs>
@@ -1054,1036 +1074,453 @@ export function LandingPage() {
                 <feDisplacementMap in="SourceGraphic" scale="30" />
               </filter>
             </defs>
-            <path
-              d="M0,55 L200,70 L350,60 L520,75 L680,65 L850,70 L1020,60 L1180,75 L1320,65 L1440,70 L1440,100 L0,100 Z"
-              fill="white"
-              filter="url(#abstract-paint-servicios)"
-              opacity="0.08"
-            />
-            <path
-              d="M0,65 L180,50 L380,60 L600,45 L820,55 L1050,50 L1260,60 L1440,55 L1440,100 L0,100 Z"
-              fill="white"
-              opacity="0.05"
-            />
+            <path d="M0,55 L200,70 L350,60 L520,75 L680,65 L850,70 L1020,60 L1180,75 L1320,65 L1440,70 L1440,100 L0,100 Z" fill="white" filter="url(#abstract-paint-servicios)" opacity="0.08" />
+            <path d="M0,65 L180,50 L380,60 L600,45 L820,55 L1050,50 L1260,60 L1440,55 L1440,100 L0,100 Z" fill="white" opacity="0.05" />
           </svg>
         </div>
       </section>
 
-      {/* SECCIÓN INFANTIL - EXPERIENCIA PREMIUM ARQUITECTÓNICA */}
-      <section id="infantil" className="relative bg-gradient-to-br from-[#0A0A0F] via-[#1a1a24] to-[#0A0A0F] py-40 lg:py-52 px-4 lg:px-8 overflow-hidden">
-        {/* Fondo dinámico mejorado */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Gradiente base radial con más dinamismo */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(255,193,7,0.15),transparent_50%),radial-gradient(ellipse_at_80%_20%,rgba(0,206,209,0.1),transparent_50%),radial-gradient(ellipse_at_50%_100%,rgba(255,105,180,0.08),transparent_60%)]" />
-          
-          <motion.div
-            animate={{ 
-              y: [0, -120, 0],
-              x: [0, 60, 0],
-              scale: [1, 1.1, 1]
-            }}
-            transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-40 left-1/3 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-[#FFD700]/12 to-transparent blur-3xl"
-          />
-          <motion.div
-            animate={{ 
-              y: [0, 100, 0],
-              x: [0, -70, 0],
-              scale: [1, 1.15, 1]
-            }}
-            transition={{ duration: 28, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute -bottom-40 right-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-tl from-[#00CED1]/12 to-transparent blur-3xl"
-          />
+      {/* ─── SECCIÓN INFANTIL — REDISEÑADA ─── */}
+      <section
+      
+        id="infantil"
+        className="relative bg-[#F8F6F1] py-14 lg:py-20 px-4 lg:px-6 overflow-hidden"
+      >
+        {/* Subtle background texture */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
+          <div className="absolute -top-40 right-0 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-[#0B0B0B]/3 blur-3xl" />
         </div>
 
-        <div className="max-w-[1600px] mx-auto relative z-10">
-          {/* HEADER PRINCIPAL - DISEÑO CREATIVO CON TÍTULO ROTADO */}
-          <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-20 mb-40">
-            {/* PEQUEÑOS - ROTADO 90 GRADOS */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="hidden lg:flex items-center relative h-64"
-            >
-              <div
-                className="text-9xl font-['Unbounded'] font-black text-white uppercase"
-                style={{
-                  writingMode: 'vertical-rl',
-                  textOrientation: 'mixed',
-                  transform: 'rotate(180deg)',
-                  letterSpacing: '-0.05em'
-                }}
-              >
-                Pequeños
-              </div>
-              <div className="absolute right-full mr-4 h-full w-1 bg-gradient-to-b from-[#FFD700] via-[#FF1493] to-transparent rounded-full" />
-            </motion.div>
+        <div className="max-w-[1200px] mx-auto relative z-10">
 
-            {/* BARBAROS - DIVIDIDO Y GRAN ESCALA */}
+          {/* ── Header ── */}
+          <div className="mb-12 lg:mb-16">
             <motion.div
-              initial={{ opacity: 0, y: -40 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.9 }}
-              className="flex-1"
+              className="flex items-center gap-2 mb-4"
             >
-              <div className="mb-12">
-                <h1 className="text-7xl lg:text-9xl font-['Unbounded'] font-black text-white uppercase tracking-tighter leading-[0.95]">
-                  <span className="block">Bar</span>
-                  <span className="bg-gradient-to-r from-[#FFD700] via-[#FF1493] to-[#00CED1] bg-clip-text text-transparent">baros</span>
-                </h1>
-              </div>
-
-              {/* SUBTÍTULO */}
-              <p className="text-base lg:text-lg text-white/70 font-['DM_Sans'] mb-10 max-w-lg leading-relaxed">
-                Experiencias que transforman momentos simples en aventuras inolvidables. Donde cada niño descubre su maestría interior.
-              </p>
-
-              {/* BOTÓN RESERVAR */}
-              <motion.a
-                href="https://wa.me/573001234567"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.1, x: 8 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FF1493] text-black font-['Unbounded'] font-black text-base uppercase tracking-widest rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300"
-              >
-                Reservar
-                <ArrowRight className="w-6 h-6" />
-              </motion.a>
+              <div className="h-px w-6 bg-[#D4AF37]" />
+              <span className="text-[#D4AF37] text-[8px] tracking-[0.5em] uppercase font-semibold">
+                Experiencia Infantil
+              </span>
             </motion.div>
 
-            {/* COLUMNA DERECHA - GRID VISUAL DE CARDS */}
-            <motion.div
-              initial={{ opacity: 0, x: 60 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.9, delay: 0.2 }}
-              className="relative"
-            >
-              {/* Grid creativo de 4 cards en disposición asimétrica */}
-              <div className="grid grid-cols-2 gap-4 lg:gap-6">
-                {/* Card Grande Superior Izquierda - NIÑO1 */}
-                <div className="lg:col-span-1 lg:row-span-2">
-                  <motion.div
-                    whileHover={{ scale: 1.08, rotateY: 5 }}
-                    className="group h-full rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 cursor-pointer relative"
-                  >
-                    <img 
-                      src="/src/assets/NIÑO1.jpg"
-                      alt="Discoverer"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent opacity-80" />
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      whileHover={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-[#0A0A0F]/95 to-transparent"
-                    >
-                      <h3 className="text-2xl font-['Unbounded'] font-black text-white mb-2">Discoverer</h3>
-                      <p className="text-xs text-white/70">El Pequeño Explorador • 4-6 años</p>
-                    </motion.div>
-                    <div className="absolute top-4 right-4 text-3xl opacity-90 group-hover:scale-0 group-hover:opacity-0 transition-all duration-300">
-                      
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Card Pequeña Superior Derecha - NIÑO2 */}
-                <motion.div
-                  whileHover={{ scale: 1.08 }}
-                  className="group rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 cursor-pointer relative h-48 lg:h-auto"
-                >
-                  <img 
-                    src="/src/assets/NIÑO2.jpg"
-                    alt="Creative"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent opacity-80" />
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    whileHover={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#0A0A0F]/95 to-transparent"
-                  >
-                    <h3 className="text-lg font-['Unbounded'] font-black text-white mb-1">Creative</h3>
-                    <p className="text-[10px] text-white/70">Artista Joven • 6-8 años</p>
-                  </motion.div>
-                  <div className="absolute top-3 right-3 text-2xl opacity-90 group-hover:scale-0 group-hover:opacity-0 transition-all duration-300">
-                    
-                  </div>
-                </motion.div>
-
-                {/* Card Pequeña Inferior Derecha - NIÑO3 */}
-                <motion.div
-                  whileHover={{ scale: 1.08 }}
-                  className="group rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 cursor-pointer relative h-48 lg:h-auto"
-                >
-                  <img 
-                    src="/src/assets/NIÑO3.jpg"
-                    alt="Navigator"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent opacity-80" />
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    whileHover={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-[#0A0A0F]/95 to-transparent"
-                  >
-                    <h3 className="text-lg font-['Unbounded'] font-black text-white mb-1">Navigator</h3>
-                    <p className="text-[10px] text-white/70">El Navegante • 8-10 años</p>
-                  </motion.div>
-                  <div className="absolute top-3 right-3 text-2xl opacity-90 group-hover:scale-0 group-hover:opacity-0 transition-all duration-300">
-                    
-                  </div>
-                </motion.div>
-
-                {/* Badge Especial Flotante */}
-                <motion.div
-                  animate={{ y: [0, -15, 0] }}
-                  transition={{ duration: 4, repeat: Infinity }}
-                  className="col-span-2 lg:col-span-1 rounded-3xl bg-gradient-to-br from-[#FFD700]/20 to-[#FF1493]/20 backdrop-blur-xl border border-white/30 p-6 flex flex-col items-center justify-center text-center h-48"
-                >
-                  <div className="text-4xl mb-3">👑</div>
-                  <h3 className="text-xl font-['Unbounded'] font-black text-white mb-2 uppercase">El Maestro</h3>
-                  <p className="text-xs text-white/70 mb-3">Experiencia Premium • 14+ años</p>
-                  <div className="text-[10px] text-white/50 uppercase tracking-widest">
-                    A consultar
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* LAS 5 EXPERIENCIAS CREATIVAS */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-40 bg-gradient-to-r from-white/[0.08] to-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/20 p-12 lg:p-16"
-          >
-            <h2 className="text-4xl font-['Unbounded'] font-black text-white uppercase mb-16 text-center tracking-tight">
-              5 Niveles de Transformación
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-              {[
-                { 
-                  level: '1',
-                  name: 'Discoverer',
-                  age: '4-6',
-                  price: '12k',
-                  time: '30m',
-                  description: 'Tu primer corte',
-                  features: ['Técnica suave', 'Fotos gratis'],
-                  color: 'from-[#FFD700] to-[#FFA500]'
-                },
-                { 
-                  level: '2',
-                  name: 'Creative',
-                  age: '6-8',
-                  price: '15k',
-                  time: '35m',
-                  description: 'Diseños únicos',
-                  features: ['Personalizado', 'Música en vivo'],
-                  color: 'from-[#FF1493] to-[#FF69B4]'
-                },
-                { 
-                  level: '3',
-                  name: 'Navigator',
-                  age: '8-10',
-                  price: '18k',
-                  time: '40m',
-                  description: 'Cortes modernos',
-                  features: ['Líneas precisas', 'Producto premium'],
-                  color: 'from-[#00CED1] to-[#00BFFF]'
-                },
-                { 
-                  level: '4',
-                  name: 'Vision',
-                  age: '10-12',
-                  price: '22k',
-                  time: '45m',
-                  description: 'Innovador total',
-                  features: ['Concepto 3D', 'Fotos profesionales'],
-                  color: 'from-[#A855F7] to-[#EC4899]'
-                },
-                { 
-                  level: '5',
-                  name: 'Organic Master',
-                  age: '12+',
-                  price: 'Premium',
-                  time: '55m',
-                  description: 'Experiencia máxima',
-                  features: ['100% personalizado', 'Spa incluido'],
-                  color: 'from-[#FFD700] to-[#FF1493]'
-                }
-              ].map((exp, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.08 }}
-                  whileHover={{ scale: 1.08, y: -10 }}
-                  className="group rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 overflow-hidden cursor-pointer relative"
-                >
-                  <div className={`h-1 bg-gradient-to-r ${exp.color}`} />
-                  <div className="p-6">
-                    <div className={`inline-block px-3 py-1 rounded-full bg-gradient-to-r ${exp.color} text-black text-xs font-bold mb-3`}>
-                      Nivel {exp.level}
-                    </div>
-                    <h3 className="text-xl font-['Unbounded'] font-black text-white uppercase mb-1 tracking-tight">
-                      {exp.name}
-                    </h3>
-                    <p className="text-[11px] text-white/50 uppercase mb-3 tracking-wider">
-                      {exp.age} años
-                    </p>
-                    <p className="text-sm text-white/70 mb-4 font-['DM_Sans'] italic">
-                      "{exp.description}"
-                    </p>
-                    <div className="space-y-2 mb-6">
-                      {exp.features.map((feature, i) => (
-                        <div key={i} className="flex items-center gap-2 text-xs text-white/60">
-                          <span className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${exp.color}`} />
-                          {feature}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="border-t border-white/10 pt-4">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="text-[9px] text-white/40 uppercase mb-1">Desde</p>
-                          <p className="text-lg font-['Unbounded'] font-black text-white">{exp.price}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-[9px] text-white/40 uppercase mb-1">Duración</p>
-                          <p className="font-bold text-white/70">{exp.time}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                    className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl pointer-events-none"
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          
-
-         
-        </div>
-
-        {/* Wave dinámico */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none">
-          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-full">
-            <defs>
-              <filter id="wave-final" x="-50%" y="-50%" width="200%" height="200%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.03 0.025" numOctaves="4" seed="88" />
-                <feDisplacementMap in="SourceGraphic" scale="45" />
-              </filter>
-            </defs>
-            <path
-              d="M0,60 Q90,20 180,60 T360,60 T540,60 T720,60 T900,60 T1080,60 T1260,60 T1440,60 L1440,120 L0,120 Z"
-              fill="white"
-              filter="url(#wave-final)"
-              opacity="0.08"
-            />
-          </svg>
-        </div>
-      </section>
-
-      {/* PROMOCIONES POR DÍA */}
-      <section id="membresías" className="relative bg-white py-14 lg:py-20 px-4 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-24 -right-10 w-80 h-80 rounded-full bg-[#D4AF37]/10 blur-3xl" />
-          <div className="absolute -bottom-24 -left-10 w-72 h-72 rounded-full bg-[#0B0B0B]/6 blur-3xl" />
-        </div>
-        <div className="max-w-[1280px] mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            {[
-              {
-                id: 1,
-                title: 'El Joven Aventurero',
-                subtitle: 'Discoverer Class',
-                description: 'Corte clásico con transiciones suaves y líneas que cuentan historias de exploración sin límites',
-                details: ['4-7 años', 'Técnica Suave', 'Experiencia Interactiva'],
-                price: '15k',
-                time: '35 min',
-                color1: '#4A90E2',
-                color2: '#7ED3FC',
-                icon: '🗺️'
-              },
-              {
-                id: 2,
-                title: 'El Rockstar Elegante',
-                subtitle: 'Creative Class',
-                description: 'Fade moderno con diseños geométricos que reflejan la personalidad única de cada pequeño',
-                details: ['7-12 años', 'Fade Sofisticado', 'Diseño Personalizado'],
-                price: '18k',
-                time: '40 min',
-                color1: '#A855F7',
-                color2: '#EC4899',
-                icon: '🎸'
-              },
-              {
-                id: 3,
-                title: 'El Explorador Extremo',
-                subtitle: 'Adventure Class',
-                description: 'Cortes dinámicos con acabados profesionales para el aventurero que busca algo diferente',
-                details: ['5-10 años', 'Diseño Único', 'Acabado Premium'],
-                price: '20k',
-                time: '45 min',
-                color1: '#10B981',
-                color2: '#34D399',
-                icon: '🧗'
-              },
-              {
-                id: 4,
-                title: 'El Príncipe Moderno',
-                subtitle: 'Premium Class',
-                description: 'Experiencia de lujo donde cada detalle es perfección, cada gesto es elegancia refinada',
-                details: ['8-14 años', 'Experiencia VIP', 'Ritual Completo'],
-                price: '24k',
-                time: '50 min',
-                color1: '#F59E0B',
-                color2: '#FCD34D',
-                icon: '👑'
-              },
-              {
-                id: 5,
-                title: 'El Naturalista',
-                subtitle: 'Organic Class',
-                description: 'Cortes naturales que respetan la textura del cabello y la creatividad del niño',
-                details: ['6-11 años', 'Técnica Natural', 'Sin Presión'],
-                price: '16k',
-                time: '38 min',
-                color1: '#059669',
-                color2: '#6EE7B7',
-                icon: '🌿'
-              },
-              {
-                id: 6,
-                title: 'El Futurista Visionario',
-                subtitle: 'Vision Class',
-                description: 'Diseños innovadores que desafían lo convencional con técnicas de vanguardia',
-                details: ['7-13 años', 'Diseño Futurista', 'Innovación Pura'],
-                price: '26k',
-                time: '55 min',
-                color1: '#0EA5E9',
-                color2: '#06B6D4',
-                icon: '🚀'
-              },
-            ].map((card, idx) => (
+            <div className="grid lg:grid-cols-[1fr_auto] gap-6 items-end">
               <motion.div
-                key={card.id}
-                initial={{ opacity: 0, y: 60, rotateX: -20 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: idx * 0.12 }}
-                className="group relative h-full"
-                style={{ perspective: '1200px' }}
+                transition={{ duration: 0.7 }}
               >
-                {/* Glow Background */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-white/5 to-white/0 rounded-2xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-20" />
-
-                {/* Card Principal con Glassmorphism */}
-                <motion.div
-                  whileHover={{ y: -8, rotateX: 5, rotateY: 3 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="relative h-full rounded-2xl overflow-hidden backdrop-blur-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] shadow-2xl"
-                  style={{
-                    background: `linear-gradient(135deg, rgba(${parseInt(card.color1.slice(1, 3), 16)}, ${parseInt(card.color1.slice(3, 5), 16)}, ${parseInt(card.color1.slice(5, 7), 16)}, 0.08), rgba(${parseInt(card.color2.slice(1, 3), 16)}, ${parseInt(card.color2.slice(3, 5), 16)}, ${parseInt(card.color2.slice(5, 7), 16)}, 0.04))`,
-                    backdropFilter: 'blur(20px)'
-                  }}
-                >
-                  {/* Efecto de luz diagonal */}
-                  <motion.div
-                    className="absolute -inset-full bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                  />
-
-                  {/* Border de gradiente animado */}
-                  <div className="absolute inset-0 rounded-2xl border border-transparent bg-gradient-to-r from-[#FFD700]/0 via-[#FF1493]/20 to-[#00CED1]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="relative z-10 p-6 lg:p-8 h-full flex flex-col">
-                    {/* Header */}
-                    <div className="mb-8">
-                      {/* Icon con animación */}
-                      <motion.div
-                        animate={{ 
-                          y: [0, -12, 0],
-                          scale: [1, 1.1, 1]
-                        }}
-                        transition={{ duration: 4, repeat: Infinity, delay: idx * 0.3 }}
-                        className="text-5xl mb-4 inline-block"
-                      >
-                        {card.icon}
-                      </motion.div>
-
-                      {/* Tag de clase */}
-                      <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-                        <div 
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: card.color1 }}
-                        />
-                        <span className="text-xs font-bold text-white/70 uppercase tracking-wider">
-                          {card.subtitle}
-                        </span>
-                      </div>
-
-                      <h3 className="text-2xl lg:text-3xl font-['Unbounded'] font-black uppercase tracking-tighter text-white mb-2">
-                        {card.title}
-                      </h3>
-
-                      {/* Línea decorativa */}
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: 40 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: idx * 0.12 + 0.3 }}
-                        className="h-0.5 rounded-full"
-                        style={{
-                          background: `linear-gradient(90deg, ${card.color1}, ${card.color2})`
-                        }}
-                      />
-                    </div>
-
-                    {/* Descripción */}
-                    <p className="text-sm lg:text-base text-white/60 leading-relaxed mb-6 flex-grow">
-                      {card.description}
-                    </p>
-
-                    {/* Detalles */}
-                    <div className="mb-6 space-y-2">
-                      {card.details.map((detail, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: idx * 0.12 + i * 0.1 }}
-                          className="flex items-center gap-2 text-sm text-white/50"
-                        >
-                          <div 
-                            className="w-1.5 h-1.5 rounded-full"
-                            style={{ backgroundColor: card.color1 }}
-                          />
-                          {detail}
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {/* Footer con precio y time */}
-                    <div className="border-t border-white/10 pt-6">
-                      <div className="flex justify-between items-end mb-4">
-                        <div>
-                          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Precio</p>
-                          <p className="text-2xl lg:text-3xl font-['Unbounded'] font-black text-white">
-                            ${card.price}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Duración</p>
-                          <p className="text-lg font-bold text-white/80">{card.time}</p>
-                        </div>
-                      </div>
-
-                      {/* CTA Button con efecto sofisticado */}
-                      <motion.a
-                        href="https://wa.me/573001234567"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ scale: 1.02, y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full py-3 px-4 rounded-xl font-bold text-sm text-[#0F0F15] uppercase tracking-wider transition-all duration-300 overflow-hidden relative group/btn"
-                        style={{
-                          background: `linear-gradient(135deg, ${card.color1}, ${card.color2})`,
-                          boxShadow: `0 8px 32px ${card.color1}40`
-                        }}
-                      >
-                        <span className="relative z-10 flex items-center justify-center gap-2">
-                          Reservar
-                          <ArrowRight className="w-4 h-4" />
-                        </span>
-                        <motion.div
-                          className="absolute inset-0 bg-white/20"
-                          initial={{ x: '-100%' }}
-                          whileHover={{ x: '100%' }}
-                          transition={{ duration: 0.5 }}
-                        />
-                      </motion.a>
-                    </div>
-                  </div>
-
-                  {/* Partículas flotantes dentro del card */}
-                  {[...Array(3)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      animate={{
-                        y: [-20, 200],
-                        opacity: [0, 0.5, 0],
-                        x: [0, (i - 1) * 20]
-                      }}
-                      transition={{
-                        duration: 3 + i,
-                        repeat: Infinity,
-                        delay: i * 0.5
-                      }}
-                      className="absolute w-1 h-1 rounded-full pointer-events-none"
-                      style={{
-                        backgroundColor: card.color1,
-                        left: `${30 + i * 20}%`,
-                        top: '-10px'
-                      }}
-                    />
-                  ))}
-                </motion.div>
+                <h2 className="font-['Unbounded'] font-bold text-3xl sm:text-4xl lg:text-4xl text-[#0B0B0B] uppercase leading-[0.92] tracking-[-0.03em]">
+                  Pequeños
+                  <br />
+                  <span className="text-[#D4AF37]">Bárbaros</span>
+                </h2>
               </motion.div>
-            ))}
+
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.15 }}
+                className="text-[#0B0B0B]/50 text-xs max-w-xs leading-relaxed lg:pb-1.5"
+              >
+                La misma precisión y cuidado de siempre, adaptada al ritmo y la energía de los más jóvenes. Un espacio seguro, amigable y sin estrés.
+              </motion.p>
+            </div>
           </div>
 
-          {/* Sección de Características Avanzadas */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20"
-          >
-            {[
-              {
-                title: 'Ambientación Inmersiva',
-                description: 'Espacios diseñados para estimular la imaginación con música, luces y decoración temática',
-                icon: '🎬'
-              },
-              {
-                title: 'Barberos Especializados',
-                description: 'Personal entrenado en técnicas gentiles y en la psicología infantil con paciencia infinita',
-                icon: '✨'
-              },
-              {
-                title: 'Experiencia Memorable',
-                description: 'Cada niño recibe un certificado personalizado y fotos profesionales de su aventura',
-                icon: '📸'
-              }
-            ].map((feature, idx) => (
+          {/* ── Servicios infantiles — tabla minimalista ── */}
+          <div className="mb-12">
+            {KIDS_SERVICES.map((service, idx) => (
               <motion.div
                 key={idx}
-                whileHover={{ y: -4 }}
-                className="rounded-xl backdrop-blur-xl border border-white/10 bg-white/[0.03] p-6 lg:p-8"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.08 }}
+                className="group grid lg:grid-cols-[2fr_1fr_1fr_auto] gap-3 lg:gap-6 items-center border-t border-[#0B0B0B]/10 py-5 hover:border-[#D4AF37]/40 transition-colors duration-400"
               >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h4 className="text-lg font-['Unbounded'] font-bold text-white mb-2 uppercase">
-                  {feature.title}
+                {/* Info */}
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <h3 className="font-['Unbounded'] font-semibold text-base lg:text-lg text-[#0B0B0B] uppercase tracking-tight">
+                      {service.name}
+                    </h3>
+                    <span className="border border-[#D4AF37]/60 text-[#8A6E1E] px-2 py-0.5 text-[7px] tracking-widest uppercase font-bold rounded-sm">
+                      {service.tag}
+                    </span>
+                  </div>
+                  <p className="text-[#0B0B0B]/45 text-xs leading-relaxed max-w-lg">{service.desc}</p>
+                </div>
+
+                {/* Edad */}
+                <div className="hidden lg:block">
+                  <div className="text-[#0B0B0B]/30 text-[8px] tracking-wider uppercase mb-0.5">Edad</div>
+                  <div className="text-[#0B0B0B]/70 font-semibold text-xs">{service.ageRange}</div>
+                </div>
+
+                {/* Precio + tiempo */}
+                <div className="flex lg:block gap-4">
+                  <div className="mb-0 lg:mb-2">
+                    <div className="text-[#0B0B0B]/30 text-[8px] tracking-wider uppercase mb-0.5">Precio</div>
+                    <div className="font-['Unbounded'] text-lg text-[#0B0B0B] font-bold tracking-tight">{service.price}</div>
+                  </div>
+                  <div>
+                    <div className="text-[#0B0B0B]/30 text-[8px] tracking-wider uppercase mb-0.5">Tiempo</div>
+                    <div className="text-[#0B0B0B]/55 text-xs">{service.time}</div>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <motion.a
+                  href="https://wa.me/573001234567"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ x: 4 }}
+                  className="inline-flex items-center gap-1.5 text-[9px] font-bold tracking-widest uppercase text-[#0B0B0B] border-b border-[#0B0B0B]/30 pb-0.5 hover:border-[#D4AF37] hover:text-[#8A6E1E] transition-colors whitespace-nowrap"
+                >
+                  Reservar
+                  <ArrowRight className="w-3 h-3" />
+                </motion.a>
+              </motion.div>
+            ))}
+            {/* Bottom border */}
+            <div className="border-t border-[#0B0B0B]/10" />
+          </div>
+
+          {/* ── Propuesta de valor — 3 pilares ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#0B0B0B]/8 rounded-2xl overflow-hidden">
+            {[
+              {
+                number: '01',
+                title: 'Sin Presión',
+                body: 'Ambiente diseñado para que los niños se sientan cómodos. Ritmo tranquilo, sin prisa y con paciencia infinita.',
+              },
+              {
+                number: '02',
+                title: 'Técnica Profesional',
+                body: 'Barberos certificados con experiencia en cortes infantiles. El mismo estándar de nuestro catálogo adulto.',
+              },
+              {
+                number: '03',
+                title: 'Recuerdo Especial',
+                body: 'El primer corte merece un diploma. Fotografía cortesía de la casa para los padres que quieran ese momento.',
+              },
+            ].map((pillar, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-white px-6 py-8 group hover:bg-[#0B0B0B] transition-colors duration-500"
+              >
+                <span className="block font-['Unbounded'] text-[#D4AF37] text-[9px] tracking-[0.4em] mb-4 group-hover:text-[#D4AF37]">
+                  {pillar.number}
+                </span>
+                <h4 className="font-['Unbounded'] font-semibold text-sm text-[#0B0B0B] uppercase tracking-tight mb-2 group-hover:text-white transition-colors duration-500">
+                  {pillar.title}
                 </h4>
-                <p className="text-sm text-white/60">
-                  {feature.description}
+                <p className="text-[#0B0B0B]/50 text-xs leading-relaxed group-hover:text-white/55 transition-colors duration-500">
+                  {pillar.body}
                 </p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
 
-          {/* CTA Final con efecto premium */}
+          {/* ── CTA Final ── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-24 relative"
+            transition={{ delay: 0.2 }}
+            className="mt-10 flex flex-col sm:flex-row items-center gap-3"
           >
-            {/* Background effects */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-[#FFD700]/20 via-[#FF1493]/20 to-[#00CED1]/20 blur-3xl opacity-60 -z-10" />
-            
-            <div className="rounded-2xl backdrop-blur-2xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 p-12 lg:p-16 text-center">
-              <h3 className="text-3xl lg:text-5xl font-['Unbounded'] font-black text-white uppercase mb-4 tracking-tighter">
-                Crea Magia en Cada Corte
-              </h3>
-              <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
-                Cada niño merece una experiencia que trascienda un simple corte. En BÁRBAROS, transformamos momentos en recuerdos eternos
-              </p>
-              
-              <motion.a
-                href="https://wa.me/573001234567"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.08, y: -3 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-[#FFD700] via-[#FF1493] to-[#00CED1] text-[#0F0F15] font-['Unbounded'] font-black text-base uppercase tracking-wider rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300"
-              >
-                Reservar Experiencia Infantil
-                <ArrowRight className="w-5 h-5" />
-              </motion.a>
-            </div>
+            <motion.a
+              href="https://wa.me/573001234567"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-2 bg-[#0B0B0B] text-white px-6 py-3 font-['Manrope'] font-bold text-[10px] tracking-[0.18em] uppercase hover:bg-[#1a1a1a] transition-colors"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.411-2.391-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.946 1.23l-.355.192-.368-.06c-1.286-.113-2.430-.511-3.428-1.218l-.744-.524-.816.823c-.248.25-.637.675-.637 1.694 0 1.289.465 2.575 1.282 3.603l.42.485-.5.328c-.961.624-1.657 1.462-2.081 2.48l-.27.692.691.423c2.669 1.635 5.812 2.586 9.012 2.586 4.677 0 9.012-1.901 12.117-5.354.31-.324.607-.67.886-1.032.138-.181.27-.365.39-.551l.386-.617-.557-.363c-.368-.237-.888-.601-1.436-1.093-.48-.433-.99-.91-1.524-1.425-.534-.515-1.037-.948-1.513-1.3l-.493-.377z"/>
+              </svg>
+              Reservar Cita Infantil
+            </motion.a>
+            <span className="text-[#0B0B0B]/35 text-[9px] tracking-[0.3em] uppercase">
+              Disponible lunes a sábado
+            </span>
           </motion.div>
-        </div>
-
-        {/* Wave Decorativo */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none">
-          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-full">
-            <defs>
-              <filter id="wave-complex" x="-50%" y="-50%" width="200%" height="200%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.028 0.025" numOctaves="4" seed="99" />
-                <feDisplacementMap in="SourceGraphic" scale="40" />
-              </filter>
-            </defs>
-            <path
-              d="M0,50 Q120,20 240,50 T480,50 T720,50 T960,50 T1200,50 T1440,50 L1440,120 L0,120 Z"
-              fill="white"
-              filter="url(#wave-complex)"
-              opacity="0.08"
-            />
-            <path
-              d="M0,60 Q150,40 300,60 T600,60 T900,60 T1200,60 T1440,60 L1440,120 L0,120 Z"
-              fill="white"
-              opacity="0.04"
-            />
-          </svg>
         </div>
       </section>
 
-      {/* WAVE */}
-      
-
-      {/* PROMOCIONES POR DÍA */}
-      <section id="membresías" className="relative bg-white py-14 lg:py-20 px-4 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-24 -right-10 w-80 h-80 rounded-full bg-[#D4AF37]/10 blur-3xl" />
-          <div className="absolute -bottom-24 -left-10 w-72 h-72 rounded-full bg-[#0B0B0B]/6 blur-3xl" />
-        </div>
-        <div className="max-w-[1280px] mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex items-center justify-center gap-2 mb-4"
-            >
-              <div className="h-[1px] w-8 bg-[#D4AF37]" />
-              <span className="text-[#D4AF37] text-[9px] tracking-[0.5em] font-['DM_Sans'] uppercase">
-                Ofertas Semanales
-              </span>
-              <div className="h-[1px] w-8 bg-[#D4AF37]" />
-            </motion.div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="font-['Unbounded'] font-semibold text-4xl lg:text-5xl text-[#0B0B0B] mb-4 uppercase tracking-tight"
-            >
-              Cada Día Es Una Oferta
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-[#0B0B0B]/50 text-base"
-            >
-              Promociones exclusivas de lunes a viernes + oferta especial semanal
-            </motion.p>
-          </div>
-
-          {/* Carrusel de Promociones Diarias */}
-          <div className="-mx-2 lg:mx-0 px-0 py-2 bg-transparent">
-            <Slider
-              dots={true}
-              infinite={true}
-              speed={800}
-              slidesToShow={2}
-              slidesToScroll={1}
-              autoplay={true}
-              autoplaySpeed={5000}
-              pauseOnHover={true}
-              arrows={false}
-              responsive={[
-                {
-                  breakpoint: 1280,
-                  settings: {
-                    slidesToShow: 1.5,
-                  }
-                },
-                {
-                  breakpoint: 768,
-                  settings: {
-                    slidesToShow: 1,
-                    dots: true
-                  }
-                }
-              ]}
-            >
-              {[
-                {
-                  day: 'LUNES',
-                  title: 'Power Monday',
-                  discount: '25%',
-                  price: '$45k',
-                  originalPrice: '$60k',
-                  service: 'Corte + Barba',
-                  bgColor: '#1A1A1A',
-                  accentColor: '#D4AF37',
-                  textColor: '#FFFFFF'
-                },
-                {
-                  day: 'MARTES',
-                  title: 'Navaja Tuesday',
-                  discount: '30%',
-                  price: '$21k',
-                  originalPrice: '$30k',
-                  service: 'Afeitado Tradicional',
-                  bgColor: '#7B1E2A',
-                  accentColor: '#C9A84C',
-                  textColor: '#FFFFFF'
-                },
-                {
-                  day: 'MIÉRCOLES',
-                  title: 'Mid-Week Fresh',
-                  discount: '20%',
-                  price: '$32k',
-                  originalPrice: '$40k',
-                  service: 'Fade Milimétrico',
-                  bgColor: '#D4AF37',
-                  accentColor: '#0B0B0B',
-                  textColor: '#0B0B0B'
-                },
-                {
-                  day: 'JUEVES',
-                  title: 'Juernes Anticipado',
-                  discount: '15%',
-                  price: '$51k',
-                  originalPrice: '$60k',
-                  service: 'Combo Premium',
-                  bgColor: '#0B0B0B',
-                  accentColor: '#D4AF37',
-                  textColor: '#FFFFFF'
-                },
-                {
-                  day: 'VIERNES',
-                  title: 'Friday Fresh',
-                  discount: '18%',
-                  price: '$29k',
-                  originalPrice: '$35k',
-                  service: 'Perfilado + Barba',
-                  bgColor: '#2D2D2D',
-                  accentColor: '#C9A84C',
-                  textColor: '#FFFFFF'
-                },
-                {
-                  day: 'ESPECIAL',
-                  title: 'Oferta Semanal',
-                  discount: '35%',
-                  price: '$78k',
-                  originalPrice: '$120k',
-                  service: 'El Ritual Bárbaro',
-                  bgColor: '#C9A84C',
-                  accentColor: '#0B0B0B',
-                  textColor: '#0B0B0B'
-                },
-              ].map((promo, idx) => {
-                const voucherSerial = getVoucherSerial(promo.day, idx);
-                const voucherValidity = PROMO_VALIDITY_BY_DAY[promo.day] ?? 'Válido por tiempo limitado';
-                const qrUrl = getVoucherQrUrl(voucherSerial);
-
-                return (
-                  <div key={idx} className="px-2">
-                    <motion.div
-                      initial={{ opacity: 0, y: 40 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{
-                        delay: idx * 0.1,
-                        duration: 0.6,
-                        ease: "easeOut"
-                      }}
-                      whileHover={{ y: -4, transition: { duration: 0.25 } }}
-                      className="coupon-card relative overflow-hidden h-[335px] lg:h-[355px] group cursor-pointer rounded-[24px]"
-                      style={{ backgroundColor: promo.bgColor }}
-                    >
-                      <div className="coupon-card__grain" />
-                      <div className="coupon-card__notch coupon-card__notch--left" />
-                      <div className="coupon-card__notch coupon-card__notch--right" />
-                      <div className="coupon-card__dash coupon-card__dash--top" />
-                      <div className="coupon-card__dash coupon-card__dash--bottom" />
-
-                      <motion.div
-                        className="absolute top-0 left-[-35%] h-full w-[30%] blur-2xl opacity-20"
-                        style={{ background: `linear-gradient(90deg, transparent, ${promo.accentColor}, transparent)` }}
-                        animate={{ x: ['0%', '480%'] }}
-                        transition={{ duration: 5.6 + idx * 0.35, repeat: Infinity, ease: "linear" }}
-                      />
-
-                      <div className="relative z-10 h-full grid grid-rows-[1fr_78px]">
-                        <div className="grid grid-cols-[74px_1fr] min-h-0">
-                          <div className="coupon-card__stub flex items-center justify-center" style={{ borderColor: `${promo.accentColor}70` }}>
-                            <p
-                              className="font-['Manrope'] text-[10px] tracking-[0.24em] uppercase font-bold"
-                              style={{ color: promo.accentColor, writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-                            >
-                              Discount Coupon
-                            </p>
-                          </div>
-
-                          <div className="relative p-4 lg:p-5">
-                            <div className="flex items-start justify-between gap-2 mb-3">
-                              <div>
-                                <p className="font-['Manrope'] text-[9px] tracking-[0.35em] uppercase font-bold mb-1" style={{ color: promo.accentColor }}>
-                                  {promo.day}
-                                </p>
-                                <h3 className="font-['Unbounded'] font-semibold text-[20px] lg:text-[23px] leading-[1] uppercase tracking-tight" style={{ color: promo.textColor }}>
-                                  {promo.title}
-                                </h3>
-                              </div>
-                              <div className="px-3 py-1 text-[10px] font-bold tracking-[0.15em] uppercase border" style={{ borderColor: `${promo.accentColor}90`, color: promo.accentColor }}>
-                                -{promo.discount}
-                              </div>
-                            </div>
-
-                            <div className="border border-dashed p-3.5" style={{ borderColor: `${promo.accentColor}70` }}>
-                              <div className="grid grid-cols-[1fr_96px] gap-3 items-end">
-                                <div>
-                                  <p className="font-['Unbounded'] text-lg lg:text-xl font-semibold leading-tight mb-1 uppercase tracking-tight" style={{ color: promo.textColor }}>
-                                    {promo.service}
-                                  </p>
-
-                                  <div className="flex items-baseline gap-2 mb-2">
-                                    <span className="font-['Unbounded'] text-[30px] lg:text-[34px] leading-none font-bold tracking-tight" style={{ color: promo.textColor }}>
-                                      {promo.price}
-                                    </span>
-                                    <span className="text-base lg:text-lg line-through" style={{ color: `${promo.textColor}80` }}>
-                                      {promo.originalPrice}
-                                    </span>
-                                  </div>
-
-                                  <div className="flex items-center justify-between gap-2 mb-3">
-                                    <p className="font-['Manrope'] text-[10px] tracking-[0.14em] uppercase" style={{ color: `${promo.textColor}D0` }}>
-                                      {voucherValidity}
-                                    </p>
-                                    <p className="font-['Manrope'] text-[9px] tracking-[0.18em] uppercase" style={{ color: promo.accentColor }}>
-                                      {voucherSerial}
-                                    </p>
-                                  </div>
-
-                                  <motion.button
-                                    whileHover={{ x: 4 }}
-                                    className="relative w-full py-2.5 font-bold text-[10px] tracking-[0.18em] uppercase flex items-center justify-between px-4 border-2 transition-all duration-300 overflow-hidden"
-                                    style={{
-                                      borderColor: promo.accentColor,
-                                      color: promo.textColor,
-                                      backgroundColor: `${promo.bgColor}B3`
-                                    }}
-                                  >
-                                    <span>Canjear Voucher</span>
-                                    <ArrowRight className="w-4 h-4" style={{ color: promo.accentColor }} />
-                                  </motion.button>
-                                </div>
-
-                                <div className="w-[96px] h-[96px] rounded-lg p-2 bg-[#F5ECD0] shadow-[0_10px_22px_rgba(0,0,0,0.25)]">
-                                  <img src={qrUrl} alt={`QR ${voucherSerial}`} className="w-full h-full object-cover rounded-sm" />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="coupon-card__footer flex items-center justify-center px-4 lg:px-5" style={{ borderColor: `${promo.accentColor}50` }}>
-                          <p className="font-['Manrope'] text-[10px] tracking-[0.18em] uppercase" style={{ color: `${promo.accentColor}D4` }}>
-                            Escanea el QR para canjear en línea
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                );
-              })}
-            </Slider>
-          </div>
-
-          {/* Nota legal */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mt-12 space-y-2"
-          >
-            <p className="text-[#0B0B0B]/30 text-xs">
-              * Promociones válidas el día indicado · No acumulables con otras ofertas · Sujeto a disponibilidad
-            </p>
-          </motion.div>
-        </div>
-
-        {/* Path decorativo blanco */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none">
-          <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-full">
-            <path
-              d="M0,60 L180,40 L360,55 L540,35 L720,50 L900,40 L1080,55 L1260,45 L1440,60 L1440,100 L0,100 Z"
-              fill="white"
-              opacity="0.05"
-            />
-          </svg>
-        </div>
-      </section>
-
-      {/* WAVE */}
-      <div className="relative h-20 bg-white">
+      {/* WAVE infantil → membresías */}
+      <div className="relative h-12 bg-white">
         <svg viewBox="0 0 1440 150" preserveAspectRatio="none" className="w-full h-full">
           <defs>
-            <filter id="abstract-paint-promo" x="-50%" y="-50%" width="200%" height="200%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.022 0.015" numOctaves="3" seed="67" />
-              <feDisplacementMap in="SourceGraphic" scale="38" />
+            <filter id="abstract-paint-kids" x="-50%" y="-50%" width="200%" height="200%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.022 0.015" numOctaves="3" seed="44" />
+              <feDisplacementMap in="SourceGraphic" scale="32" />
             </filter>
           </defs>
-          <path
-            d="M0,100 L150,70 L310,90 L470,65 L630,85 L790,70 L950,80 L1110,65 L1270,75 L1440,70 L1440,150 L0,150 Z"
-            fill="#0B0B0B"
-            filter="url(#abstract-paint-promo)"
-            opacity="0.9"
-          />
-          <path
-            d="M0,115 L200,85 L410,100 L620,80 L830,95 L1040,85 L1250,100 L1440,90 L1440,150 L0,150 Z"
-            fill="#0B0B0B"
-            opacity="0.6"
-          />
-          <path
-            d="M0,125 L240,110 L480,120 L720,110 L960,125 L1200,115 L1440,125 L1440,150 L0,150 Z"
-            fill="#0B0B0B"
-            opacity="0.4"
-          />
+          <path d="M0,95 L180,70 L360,90 L540,65 L720,85 L900,70 L1080,85 L1260,68 L1440,80 L1440,150 L0,150 Z" fill="#ffffff" filter="url(#abstract-paint-kids)" opacity="1" />
         </svg>
       </div>
 
-      {/* GALERÍA MINIMALISTA - GRID MODERNO */}
-      <section id="galería" className="relative bg-[#0B0B0B] py-12 lg:py-16 px-4 lg:px-8">
+  {/* ─── PROMOCIONES EDITORIALES ─── */}
+<section
+  id="membresías"
+  className="relative bg-white py-16 lg:py-28 overflow-hidden"
+  aria-label="Promociones semanales"
+>
+  {/* ATMÓSFERA */}
+  <div className="absolute inset-0 pointer-events-none">
+    <div className="absolute top-[-240px] right-[-240px] w-[540px] h-[540px] bg-[#D4AF37]/10 blur-[140px]" />
+    <div className="absolute bottom-[-240px] left-[-240px] w-[500px] h-[500px] bg-black/5 blur-[160px]" />
+    {/* grano sutil */}
+    <div
+      className="absolute inset-0 opacity-[0.035] mix-blend-multiply"
+      style={{
+        backgroundImage:
+          "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+      }}
+    />
+  </div>
+
+  {/* NUMERAL EDITORIAL DE FONDO */}
+  <div className="hidden lg:block absolute left-[5%] top-1/2 -translate-y-1/2 pointer-events-none select-none">
+    <span className="font-['Unbounded'] text-[22rem] leading-none text-black/[0.03] tracking-tighter">
+      05
+    </span>
+  </div>
+
+  <div className="relative max-w-[1320px] mx-auto px-5">
+    {/* CABECERA EDITORIAL */}
+    <div className="flex items-end justify-between mb-12 lg:mb-16">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-px bg-[#D4AF37]" />
+        <p className="text-[#D4AF37] text-[9px] tracking-[0.5em] uppercase">
+          Edición Semanal · 2026
+        </p>
+      </div>
+      <p className="hidden md:block text-black/40 text-[9px] tracking-[0.3em] uppercase">
+        Lun — Vie
+      </p>
+    </div>
+
+    <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      {/* ─── COLLAGE (lg+) ─── */}
+      <div className="relative h-[500px] hidden lg:block">
+        {PROMOS.map((p, i) => (
+          <motion.article
+            key={p.day}
+            initial={{ opacity: 0, y: 40, rotate: p.rotate }}
+            whileInView={{ opacity: 1, y: 0, rotate: p.rotate }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{
+              duration: 0.9,
+              delay: i * 0.12,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            whileHover={{ scale: 1.03, rotate: 0, zIndex: 50 }}
+            className={`absolute group cursor-pointer ${p.position} ${p.theme} shadow-[0_30px_80px_-20px_rgba(0,0,0,0.35)] transition-shadow duration-500 hover:shadow-[0_40px_100px_-10px_rgba(212,175,55,0.35)]`}
+            style={{ width: p.width }}
+          >
+            <motion.div
+              animate={{ y: [0, p.float, 0] }}
+              transition={{
+                duration: p.duration,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="p-6 lg:p-8"
+            >
+              {p.featured && (
+                <span className="inline-block mb-3 px-2 py-0.5 border border-[#D4AF37]/40 text-[#D4AF37] text-[8px] tracking-[0.4em] uppercase">
+                  Destacado
+                </span>
+              )}
+
+              <p className="text-[#D4AF37] text-[9px] tracking-[0.5em] uppercase mb-2">
+                {p.day}
+              </p>
+
+              <h3
+                className={`font-['Unbounded'] uppercase mb-3 leading-tight ${
+                  p.featured ? "text-2xl" : "text-base"
+                }`}
+              >
+                {p.title}
+              </h3>
+
+              {p.subtitle && (
+                <p className="text-white/50 text-xs mb-4 leading-relaxed">
+                  {p.subtitle}
+                </p>
+              )}
+
+              <div className="flex items-end gap-2">
+                <span
+                  className={`font-bold ${
+                    p.featured ? "text-4xl" : "text-xl"
+                  }`}
+                >
+                  {p.price}
+                </span>
+                <span className="text-white/30 line-through text-xs pb-0.5">
+                  {p.original}
+                </span>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                <span className="text-[9px] tracking-[0.3em] uppercase text-white/40">
+                  0{i + 1} / 05
+                </span>
+                <span className="text-[#D4AF37] text-[10px] tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+                  Reservar →
+                </span>
+              </div>
+            </motion.div>
+          </motion.article>
+        ))}
+      </div>
+
+      {/* ─── COLLAGE FALLBACK (mobile/tablet) ─── */}
+      <div className="lg:hidden grid sm:grid-cols-2 gap-3">
+        {PROMOS.map((p) => (
+          <article
+            key={p.day}
+            className={`${p.theme} p-5 ${
+              p.featured ? "sm:col-span-2" : ""
+            }`}
+          >
+            <p className="text-[#D4AF37] text-[9px] tracking-[0.5em] uppercase mb-2">
+              {p.day}
+            </p>
+            <h3 className="font-['Unbounded'] text-lg uppercase mb-2">
+              {p.title}
+            </h3>
+            {p.subtitle && (
+              <p className="text-white/50 text-xs mb-3">{p.subtitle}</p>
+            )}
+            <div className="flex items-end gap-2">
+              <span className="text-xl font-bold">{p.price}</span>
+              <span className="text-white/30 line-through text-xs pb-0.5">
+                {p.original}
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {/* ─── DERECHA: TEXTO + CTA ─── */}
+      <div className="relative flex lg:justify-end">
+        <div className="text-left lg:text-right max-w-md">
+          <div className="flex lg:justify-end items-center gap-3 mb-6">
+            <p className="text-[#D4AF37] text-[10px] tracking-[0.5em] uppercase">
+              Ofertas Semanales
+            </p>
+            <div className="w-8 h-px bg-[#D4AF37]" />
+          </div>
+
+          <h2 className="font-['Unbounded'] text-4xl sm:text-5xl lg:text-6xl uppercase leading-[0.95]">
+            Cada Día<br />
+            <span className="text-[#D4AF37] italic font-light">Una</span>{" "}
+            Experiencia
+          </h2>
+
+          <p className="text-black/50 mt-8 leading-relaxed">
+            No son descuentos. Son rituales diseñados con intención, precisión
+            y carácter — uno distinto para cada día de la semana.
+          </p>
+
+          <div className="mt-12 flex flex-col lg:items-end gap-4">
+            <button className="group relative inline-flex items-center gap-3 bg-[#0B0B0B] text-white px-8 py-4 overflow-hidden transition-all hover:bg-[#D4AF37] hover:text-black">
+              <span className="text-xs tracking-[0.4em] uppercase">
+                Reservar Esta Semana
+              </span>
+              <span className="text-lg transition-transform group-hover:translate-x-1">
+                →
+              </span>
+            </button>
+            <p className="text-black/40 text-[11px] tracking-[0.2em] uppercase">
+              Cupos limitados · Confirmación inmediata
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none">
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-full">
+    <defs>
+      <filter id="ink-bleed" x="-50%" y="-50%" width="200%" height="200%">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.015 0.03"
+          numOctaves="4"
+          seed="9"
+        />
+        <feDisplacementMap in="SourceGraphic" scale="45" />
+        <feGaussianBlur stdDeviation="0.8" />
+      </filter>
+    </defs>
+
+    {/* BASE NEGRA (firme, inferior) */}
+    <path
+      d="M0,70
+         C120,60 220,90 340,75
+         C460,60 560,95 700,78
+         C840,62 960,88 1100,74
+         C1240,60 1340,85 1440,72
+         L1440,120 L0,120 Z"
+      fill="#cecece"
+    />
+
+    {/* TINTA ORGÁNICA (más fluida, irregular) */}
+    <path
+      d="M0,55
+         C140,80 260,40 380,70
+         C520,100 640,35 780,65
+         C920,95 1040,45 1180,75
+         C1300,95 1380,60 1440,80
+         L1440,120 L0,120 Z"
+      fill="#000000"
+      filter="url(#ink-bleed)"
+    />
+  </svg>
+</div>
+</section>
+     
+
+      {/* ─── GALERÍA ─── */}
+      <section id="galería" className="relative bg-[#0B0B0B] py-10 lg:py-12 px-4 lg:px-6">
+        
         <div className="max-w-[1200px] mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex items-center justify-center gap-2 mb-4"
+              className="flex items-center justify-center gap-2 mb-3"
             >
-              <div className="h-[1px] w-8 bg-[#D4AF37]" />
-              <span className="text-[#D4AF37] text-[9px] tracking-[0.5em] font-['DM_Sans'] uppercase">
-                Portfolio
-              </span>
-              <div className="h-[1px] w-8 bg-[#D4AF37]" />
+              <div className="h-[1px] w-6 bg-[#D4AF37]" />
+              <span className="text-[#D4AF37] text-[8px] tracking-[0.5em] font-['DM_Sans'] uppercase">Portfolio</span>
+              <div className="h-[1px] w-6 bg-[#D4AF37]" />
             </motion.div>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-['Unbounded'] font-semibold text-4xl lg:text-5xl text-white mb-4 uppercase tracking-tight"
+              className="font-['Unbounded'] font-semibold text-3xl lg:text-4xl text-white mb-3 uppercase tracking-tight"
             >
               Trabajos Destacados
             </motion.h2>
@@ -2092,38 +1529,19 @@ export function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-white/50 text-base"
+              className="text-white/50 text-sm"
             >
               135 años de maestría en cada corte
             </motion.p>
           </div>
 
-          {/* Carrusel Superior - Dirección Normal */}
-          <div className="-mx-6 lg:-mx-12 mb-6">
+          <div className="-mx-5 lg:-mx-6 mb-5">
             <Slider
-              dots={false}
-              infinite={true}
-              speed={4000}
-              slidesToShow={4.2}
-              slidesToScroll={1}
-              autoplay={true}
-              autoplaySpeed={0}
-              cssEase="linear"
-              pauseOnHover={true}
-              arrows={false}
+              dots={false} infinite={true} speed={4000} slidesToShow={4.2} slidesToScroll={1}
+              autoplay={true} autoplaySpeed={0} cssEase="linear" pauseOnHover={true} arrows={false}
               responsive={[
-                {
-                  breakpoint: 1024,
-                  settings: {
-                    slidesToShow: 3,
-                  }
-                },
-                {
-                  breakpoint: 640,
-                  settings: {
-                    slidesToShow: 1.6,
-                  }
-                }
+                { breakpoint: 1024, settings: { slidesToShow: 3 } },
+                { breakpoint: 640, settings: { slidesToShow: 1.6 } },
               ]}
             >
               {[
@@ -2143,22 +1561,12 @@ export function LandingPage() {
                     transition={{ delay: idx * 0.05 }}
                     className="group relative overflow-hidden h-[250px] lg:h-[320px]"
                   >
-                    <img
-                      src={item.img}
-                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-75"
-                      alt={item.label}
-                    />
+                    <img src={item.img} className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-75" alt={item.label} />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/90 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    {/* Contenido en hover */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                       <div className="h-[1px] w-12 bg-[#D4AF37] mb-3" />
-                      <h3 className="font-['Unbounded'] font-semibold text-lg text-white uppercase tracking-tight">
-                        {item.label}
-                      </h3>
+                      <h3 className="font-['Unbounded'] font-semibold text-lg text-white uppercase tracking-tight">{item.label}</h3>
                     </div>
-
-                    {/* Border en hover */}
                     <div className="absolute inset-0 border-2 border-[#D4AF37]/0 group-hover:border-[#D4AF37]/30 transition-colors duration-500" />
                   </motion.div>
                 </div>
@@ -2166,33 +1574,13 @@ export function LandingPage() {
             </Slider>
           </div>
 
-          {/* Carrusel Inferior - Dirección Inversa */}
-          <div className="-mx-6 lg:-mx-12">
+          <div className="-mx-5 lg:-mx-6">
             <Slider
-              dots={false}
-              infinite={true}
-              speed={3500}
-              slidesToShow={4.2}
-              slidesToScroll={1}
-              autoplay={true}
-              autoplaySpeed={0}
-              cssEase="linear"
-              pauseOnHover={true}
-              arrows={false}
-              rtl={true}
+              dots={false} infinite={true} speed={3500} slidesToShow={4.2} slidesToScroll={1}
+              autoplay={true} autoplaySpeed={0} cssEase="linear" pauseOnHover={true} arrows={false} rtl={true}
               responsive={[
-                {
-                  breakpoint: 1024,
-                  settings: {
-                    slidesToShow: 3,
-                  }
-                },
-                {
-                  breakpoint: 640,
-                  settings: {
-                    slidesToShow: 1.6,
-                  }
-                }
+                { breakpoint: 1024, settings: { slidesToShow: 3 } },
+                { breakpoint: 640, settings: { slidesToShow: 1.6 } },
               ]}
             >
               {[
@@ -2212,22 +1600,12 @@ export function LandingPage() {
                     transition={{ delay: idx * 0.05 }}
                     className="group relative overflow-hidden h-[250px] lg:h-[320px]"
                   >
-                    <img
-                      src={item.img}
-                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-75"
-                      alt={item.label}
-                    />
+                    <img src={item.img} className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-75" alt={item.label} />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/90 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    {/* Contenido en hover */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                       <div className="h-[1px] w-12 bg-[#D4AF37] mb-3" />
-                      <h3 className="font-['Unbounded'] font-semibold text-lg text-white uppercase tracking-tight">
-                        {item.label}
-                      </h3>
+                      <h3 className="font-['Unbounded'] font-semibold text-lg text-white uppercase tracking-tight">{item.label}</h3>
                     </div>
-
-                    {/* Border en hover */}
                     <div className="absolute inset-0 border-2 border-[#D4AF37]/0 group-hover:border-[#D4AF37]/30 transition-colors duration-500" />
                   </motion.div>
                 </div>
@@ -2235,7 +1613,6 @@ export function LandingPage() {
             </Slider>
           </div>
 
-          {/* Instagram CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2255,88 +1632,105 @@ export function LandingPage() {
           </motion.div>
         </div>
       </section>
+      
 
-      {/* SECCIÓN DE CONTACTO CON IMAGEN */}
-      <section className="relative w-full bg-white py-0 px-0">
-        <div className="w-full h-[720px]">
-          <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-0 items-stretch h-full">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="flex flex-col justify-center bg-white p-8 lg:pl-16 lg:pr-8 lg:py-16"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-[1px] bg-[#D4AF37]" />
-                <span className="text-[#D4AF37] text-[9px] tracking-[0.4em] font-['DM_Sans'] uppercase">
-                  Contacto
-                </span>
-              </div>
-              <h2 className="font-['Unbounded'] font-semibold text-3xl lg:text-4xl text-[#0B0B0B] mb-6 uppercase tracking-tight">
-                Conéctate Con Nosotros
-              </h2>
-              <p className="text-[#0B0B0B]/70 text-lg mb-8">
-                Estamos aquí para ayudarte con cualquier duda o para agendar tu próxima cita en BÁRBAROS.
-              </p>
-              <motion.a
-                href="https://wa.me/573001234567"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ x: 5 }}
-                className="inline-flex items-center gap-3 bg-[#D4AF37] text-[#0B0B0B] px-8 py-3 font-bold text-xs tracking-wider uppercase w-fit"
-              >
-                WhatsApp
-                <ArrowRight className="w-4 h-4" />
-              </motion.a>
-            </motion.div>
+ {/* CONTACT SECTION — ICONIC STYLE */}
+<section className="relative w-full h-[75vh] min-h-[550px] overflow-hidden">
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative w-full h-full overflow-visible flex items-center justify-center lg:-ml-12"
-            >
-              <img
-                src={contactImage}
-                alt="Contacto"
-                className="w-[108%] h-[108%] max-w-none object-contain"
-              />
-            </motion.div>
-          </div>
+  {/* BACKGROUND IMAGE */}
+  <div className="absolute inset-0">
+    <img
+      src={contactImage}
+      alt="Barbaros Contacto"
+      className="w-full h-full object-cover scale-105"
+    />
+    <div className="absolute inset-0 bg-black/60" />
+  </div>
+
+  {/* CONTENT */}
+  <div className="relative z-10 h-full flex items-center">
+    <div className="max-w-[1200px] mx-auto px-4 lg:px-8 w-full">
+
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="max-w-md"
+      >
+
+        {/* LABEL */}
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-8 h-[1px] bg-[#D4AF37]" />
+          <span className="text-[#D4AF37] text-[9px] tracking-[0.4em] uppercase">
+            Contacto
+          </span>
         </div>
-      </section>
 
-      {/* FOOTER MINIMALISTA */}
-      <footer className="bg-[#0B0B0B] text-white py-16 px-6 lg:px-12">
+        {/* TITLE */}
+        <h2 className="font-['Unbounded'] text-3xl lg:text-4xl leading-[1.1] text-white uppercase tracking-tight mb-4">
+          Agenda Tu
+          <br />
+          Próximo Corte
+        </h2>
+
+        {/* TEXT */}
+        <p className="text-white/70 text-base leading-relaxed mb-6">
+          Más que una cita, una experiencia. Reserva en segundos y vive la tradición de Bárbaros con el nivel que mereces.
+        </p>
+
+        {/* CTA */}
+        <motion.a
+          href="https://wa.me/573001234567"
+          target="_blank"
+          rel="noopener noreferrer"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          className="group inline-flex items-center gap-3 bg-[#D4AF37] text-black px-8 py-3 text-[10px] tracking-[0.2em] uppercase font-bold transition-all duration-300"
+        >
+          Reservar por WhatsApp
+
+          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+        </motion.a>
+
+      </motion.div>
+    </div>
+  </div>
+
+  {/* DECORATIVE ELEMENT (SUBTLE BRAND LINE) */}
+  <div className="absolute bottom-0 left-0 w-full h-[1px] bg-white/10" />
+</section>
+
+      {/* ─── FOOTER ─── */}
+      <footer className="bg-[#0B0B0B] text-white py-12 px-4 lg:px-8">
         <div className="max-w-[1200px] mx-auto">
-          <div className="grid lg:grid-cols-4 gap-12 mb-12">
+          <div className="grid lg:grid-cols-4 gap-8 mb-8">
             <div className="lg:col-span-2">
-              <div className="mb-4">
-                <h3 className="font-['Unbounded'] font-semibold text-xl mb-1 uppercase tracking-tight">
+              <div className="mb-3">
+                <h3 className="font-['Unbounded'] font-semibold text-lg mb-0.5 uppercase tracking-tight">
                   {APP_BRAND.name}
                 </h3>
-                <div className="flex items-center gap-2">
-                  <div className="h-[1px] w-8 bg-[#D4AF37]" />
-                  <span className="text-[#D4AF37] text-[8px] tracking-[0.3em]">{APP_BRAND.foundationLabel}</span>
+                <div className="flex items-center gap-1.5">
+                  <div className="h-[1px] w-6 bg-[#D4AF37]" />
+                  <span className="text-[#D4AF37] text-[7px] tracking-[0.3em]">{APP_BRAND.foundationLabel}</span>
                 </div>
               </div>
-              <p className="text-white/50 text-sm mb-6 max-w-sm">
+              <p className="text-white/50 text-xs mb-4 max-w-sm">
                 Barbería clásica en Puerto Colombia. 135 años de tradición.
               </p>
               <a
                 href="https://instagram.com/barbarosclub.1888"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-white/60 hover:text-[#D4AF37] transition-colors text-sm"
+                className="inline-flex items-center gap-1.5 text-white/60 hover:text-[#D4AF37] transition-colors text-xs"
               >
-                <Instagram className="w-4 h-4" />
+                <Instagram className="w-3 h-3" />
                 @barbarosclub.1888
               </a>
             </div>
 
             <div>
-              <h4 className="font-bold text-sm mb-4 tracking-wider uppercase">Enlaces</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-bold text-xs mb-3 tracking-wider uppercase">Enlaces</h4>
+              <ul className="space-y-1.5 text-xs">
                 {footerNav.map((link) => (
                   <li key={link}>
                     <a
@@ -2351,16 +1745,16 @@ export function LandingPage() {
             </div>
 
             <div>
-              <h4 className="font-bold text-sm mb-4 tracking-wider uppercase">Contacto</h4>
-              <ul className="space-y-2 text-sm text-white/50">
+              <h4 className="font-bold text-xs mb-3 tracking-wider uppercase">Contacto</h4>
+              <ul className="space-y-1.5 text-xs text-white/50">
                 <li>Puerto Colombia</li>
                 <li>+57 300 123 4567</li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-8 text-center">
-            <p className="text-white/30 text-xs">
+          <div className="border-t border-white/10 pt-6 text-center">
+            <p className="text-white/30 text-[9px]">
               &copy; 2026 {APP_BRAND.name} 1888. Todos los derechos reservados.
             </p>
           </div>
